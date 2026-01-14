@@ -1,9 +1,10 @@
 # bfree ✨
 
-A beautiful, free terminal dashboard in the spirit of tools like `btop`.
-`bfree` is just starting out, but the goal is clear: a fast, elegant, zero-cost TUI you will actually enjoy running.
+A better and beautiful `free`, in the spirit of tools like `btop`.
+`bfree` is just starting out, but the goal is clear: a fast, elegant, zero-cost TUI you’ll actually enjoy running.
 
-> Better & beautiful free, — the **bfree** command. 🚀
+The command nobody asked for — but your RAM deserves it. 🚀
+
 
 ## Highlights
 
@@ -16,12 +17,6 @@ A beautiful, free terminal dashboard in the spirit of tools like `btop`.
 - ✅ Hello screen placeholder
 - 🔜 Real data, panels, and layout
 
-## Install
-
-```bash
-cargo build --release
-```
-
 ## Run
 
 ```bash
@@ -30,9 +25,9 @@ cargo run
 
 ## Roadmap (short and sweet)
 
-- 📊 System overview panel
+- ✅ Basic free reimplementation
+- 📊 Core panels and bars
 - 🧩 Modular widgets
-- 🎨 Polished theme + layout
 
 ## Contributing
 
