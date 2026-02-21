@@ -1,0 +1,45 @@
+use bfree::core::memory_stats::MemoryStats;
+use bfree::render::verbose::render;
+
+#[test]
+fn verbose_render_matches_expected_layout_and_values() {
+    let gib = 1024_u64.pow(3);
+    let stats = MemoryStats::new(
+        10 * gib,
+        6 * gib,
+        2 * gib,
+        1 * gib,
+        512 * 1024 * 1024,
+        2 * gib,
+        gib,
+    );
+
+    let out = render(&stats);
+
+    let expected = "Memory\n  Total:        10.0G\n  Used:         4.0G (40%)\n  Cache:        2.5G (25%)\n  Available:    6.0G (60%)\n\nSwap\n  Total:        2.0G\n  Used:         1.0G (50%)\n\nKernel Breakdown\n  Cached:        2.0G\n  SReclaimable:  1.0G\n  Shmem:         512.0M\n";
+
+    assert_eq!(out, expected);
+}
+
+#[test]
+fn verbose_render_handles_small_and_zero_values() {
+    let stats = MemoryStats::new(999, 0, 0, 0, 0, 0, 0);
+
+    let out = render(&stats);
+
+    assert!(out.contains("Total:        999B"));
+    assert!(out.contains("Used:         999B (100%)"));
+    assert!(out.contains("Cache:        0B (0%)"));
+    assert!(out.contains("Available:    0B (0%)"));
+    assert!(out.contains("Swap\n  Total:        0B\n  Used:         0B (0%)"));
+}
+
+#[test]
+fn verbose_render_formats_kibibyte_boundary_as_k() {
+    let stats = MemoryStats::new(1024, 0, 0, 0, 0, 0, 0);
+
+    let out = render(&stats);
+
+    assert!(out.contains("Total:        1K"));
+    assert!(out.contains("Used:         1K (100%)"));
+}
