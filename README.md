@@ -1,33 +1,42 @@
 # bfree ✨
 
-A better and beautiful `free`, in the spirit of tools like `btop`.
-`bfree` is just starting out, but the goal is clear: a fast, elegant, zero-cost TUI you’ll actually enjoy running.
+A better, human-first `free`, inspired by tools like `btop`.
+`bfree` is just starting out, but the goal is clear: a fast, elegant, zero-overhead command you’ll actually enjoy running.
 
 The command nobody asked for — but your RAM deserves it. 🚀
 
+## Why bfree?
+
+The traditional `free` command is powerful but outdated in UX and modern workload awareness.
+
+### Problems with `free`
+
+- ❌ Not human-readable by default (KB output)
+- ❌ Confusing memory semantics (`used` vs `free` vs `buff/cache`)
+- ❌ No percentages
+- ❌ No visual signal
+- ❌ Not container/cgroup aware
+- ❌ No context about reclaimable memory
+- ❌ No PSI (pressure stall info)
+- ❌ Misleading inside Kubernetes / Docker / Podman
+
+Modern systems deserve better visibility.
 
 ## Highlights
 
-- 🧼 **Clean by design** — minimal, focused, and pleasant to read.
-- ⚡ **Snappy TUI** — built with `ratatui` + `crossterm`.
-- 🌱 **Early stage** — small now, growing fast.
+- 🧼 **Clean by design** — minimal, focused, and pleasant to read
+- ⚡ **Snappy** — built with `clap`
 
 ## Status
 
-- ✅ Hello screen placeholder
-- 🔜 Real data, panels, and layout
+- ✅ CLI scaffold
+- 🔜 Memory logic
 
 ## Run
 
 ```bash
-cargo run
+cargo run --
 ```
-
-## Roadmap (short and sweet)
-
-- ✅ Basic free reimplementation
-- 📊 Core panels and bars
-- 🧩 Modular widgets
 
 ## Contributing
 
