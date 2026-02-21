@@ -1,60 +1,89 @@
-# bfree ✨
+# bfree
 
-A better `free`, human by default.
-Inspired by tools like `btop`, `bfree` gives you memory and swap stats in a clean one-line summary.
+A better `free`, human by default. Inspired by tools like `btop`, `bfree` gives you memory and swap stats in a clean one-line summary.
 
-The command nobody asked for — but your RAM deserves it. 🚀
+`bfree` is a lightweight Rust CLI that provides a clearer, human-oriented view of Linux memory and swap usage.
 
-## Why bfree?
+It keeps the speed and simplicity of `free` while improving readability and presenting practical memory semantics by default.
 
-The traditional `free` command is powerful but outdated in UX and modern workload awareness.
+## Features
 
-### Problems with `free`
+- Human-readable sizes and percentages
+- Multiple output modes: `compact` (default), `extended`, and `pretty`
+- Linux-native data source: `/proc/meminfo`
+- Small dependency surface and fast startup
 
-- ❌ Not human-readable by default (KB output)
-- ❌ Confusing memory semantics (`used` vs `free` vs `buff/cache`)
-- ❌ No percentages
-- ❌ No visual signal
-- ❌ Not container/cgroup aware
-- ❌ No context about reclaimable memory
-- ❌ No PSI (pressure stall info)
-- ❌ Misleading inside Kubernetes / Docker / Podman
+## Installation
 
-Modern systems deserve better visibility.
+### From source
 
-## Highlights
+```bash
+git clone https://github.com/glexposito/bfree
+cd bfree
+cargo build --release
+./target/release/bfree
+```
 
-- 🧼 **Clean by design** — minimal, focused, and pleasant to read
-- 📊 **Human-first output** — sizes + percentages in one line
-- 🧠 **Useful memory semantics** — includes effective reclaimable cache
-- ⚡ **Snappy** — lightweight Rust CLI
+### Arch Linux (AUR)
 
-## Status
+Release publishing to AUR is automated by the project release workflow.
 
-- ✅ Linux `/proc/meminfo` parser
-- ✅ One-line memory + swap output
-- ✅ Percentages for used/cache/available/swap
-- ✅ Unit tests for memory math
-- 🔜 Container/cgroup-aware mode
-- 🔜 PSI (pressure stall information)
-- 🔜 Optional visual signal (bars/colors)
+```bash
+<aur-helper> -S bfree
+```
 
-## Current Semantics
+## Usage
 
-- `used` = `MemTotal - MemAvailable`
-- `cache` = `Cached + SReclaimable - Shmem` (effective reclaimable cache)
-- `avail` = `MemAvailable`
+```bash
+bfree
+```
 
-## Run
+```bash
+bfree --extended
+```
+
+```bash
+bfree --pretty
+```
+
+## Output Semantics
+
+`bfree` currently uses the following memory model:
+
+- `used = MemTotal - MemAvailable`
+- `cache = Cached + SReclaimable - Shmem` (effective reclaimable cache)
+- `avail = MemAvailable`
+
+## Project Status
+
+Implemented:
+
+- Linux `/proc/meminfo` parser with typed error handling
+- Compact, extended, and pretty renderers
+- Unit tests for memory math and render behavior
+- CI for pushes and pull requests
+- Release automation for GitHub releases and AUR updates
+
+Planned:
+
+- Fedora COPR packaging and publish pipeline
+- Container/cgroup-aware mode
+- PSI (Pressure Stall Information) support
+
+## Development
 
 ```bash
 cargo run --
 ```
 
+```bash
+cargo test --all-targets --all-features
+```
+
 ## Contributing
 
-Ideas, feedback, and PRs are welcome. The project is young — jump in early and shape it.
+Issues and pull requests are welcome.
 
----
+## License
 
-Made with ❤️ for the terminal.
+MIT License. See [LICENSE](LICENSE).
