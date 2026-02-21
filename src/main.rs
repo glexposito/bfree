@@ -14,6 +14,7 @@ struct Args {
     #[arg(
         short = 'e',
         long = "extended",
+        conflicts_with = "pretty",
         help = "Show extended memory details (totals, percentages, and kernel breakdown)"
     )]
     extended: bool,
@@ -21,6 +22,7 @@ struct Args {
     #[arg(
         short = 'p',
         long = "pretty",
+        conflicts_with = "extended",
         help = "Show a visual view with colored bars for memory and swap"
     )]
     pretty: bool,
