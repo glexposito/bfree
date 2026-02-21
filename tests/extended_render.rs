@@ -1,8 +1,8 @@
 use bfree::core::memory_stats::MemoryStats;
-use bfree::render::verbose::render;
+use bfree::render::extended::render;
 
 #[test]
-fn verbose_render_matches_expected_layout_and_values() {
+fn extended_render_matches_expected_layout_and_values() {
     let gib = 1024_u64.pow(3);
     let stats = MemoryStats::new(
         10 * gib,
@@ -22,7 +22,7 @@ fn verbose_render_matches_expected_layout_and_values() {
 }
 
 #[test]
-fn verbose_render_handles_small_and_zero_values() {
+fn extended_render_handles_small_and_zero_values() {
     let stats = MemoryStats::new(999, 0, 0, 0, 0, 0, 0);
 
     let out = render(&stats);
@@ -35,7 +35,7 @@ fn verbose_render_handles_small_and_zero_values() {
 }
 
 #[test]
-fn verbose_render_formats_kibibyte_boundary_as_k() {
+fn extended_render_formats_kibibyte_boundary_as_k() {
     let stats = MemoryStats::new(1024, 0, 0, 0, 0, 0, 0);
 
     let out = render(&stats);

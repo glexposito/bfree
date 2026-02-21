@@ -1,5 +1,5 @@
 use bfree::platform::linux;
-use bfree::render::{pretty, text, verbose};
+use bfree::render::{compact, extended, pretty};
 use clap::Parser;
 
 #[derive(Parser)]
@@ -11,10 +11,18 @@ use clap::Parser;
 )]
 
 struct Args {
-    #[arg(short, long)]
-    verbose: bool,
+    #[arg(
+        short = 'e',
+        long = "extended",
+        help = "Show extended memory details (totals, percentages, and kernel breakdown)"
+    )]
+    extended: bool,
 
-    #[arg(long)]
+    #[arg(
+        short = 'p',
+        long = "pretty",
+        help = "Show a visual view with colored bars for memory and swap"
+    )]
     pretty: bool,
 }
 
@@ -28,9 +36,9 @@ fn main() {
 
     if args.pretty {
         print!("{}", pretty::render(&stats));
-    } else if args.verbose {
-        print!("{}", verbose::render(&stats));
+    } else if args.extended {
+        print!("{}", extended::render(&stats));
     } else {
-        println!("{}", text::one_line(&stats));
+        println!("{}", compact::render(&stats));
     }
 }

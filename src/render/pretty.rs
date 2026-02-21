@@ -1,4 +1,5 @@
 use crate::core::memory_stats::MemoryStats;
+use crate::render::format::fmt_short;
 
 const BAR_WIDTH: usize = 24;
 
@@ -108,26 +109,5 @@ fn bar(percent: f64, tone: BarTone) -> String {
         BarTone::Danger => format!("\x1b[31m{raw_bar}\x1b[0m"),
         BarTone::Warning => format!("\x1b[33m{raw_bar}\x1b[0m"),
         BarTone::Good => format!("\x1b[32m{raw_bar}\x1b[0m"),
-    }
-}
-
-fn fmt_short(bytes: u64) -> String {
-    const K: f64 = 1024.0;
-    const M: f64 = 1024.0 * 1024.0;
-    const G: f64 = 1024.0 * 1024.0 * 1024.0;
-    const T: f64 = 1024.0 * 1024.0 * 1024.0 * 1024.0;
-
-    let b = bytes as f64;
-
-    if b >= T {
-        format!("{:.1}T", b / T)
-    } else if b >= G {
-        format!("{:.1}G", b / G)
-    } else if b >= M {
-        format!("{:.1}M", b / M)
-    } else if b >= K {
-        format!("{:.0}K", b / K)
-    } else {
-        format!("{bytes}B")
     }
 }
