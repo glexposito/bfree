@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read version from Cargo.toml
+        id: cargo_version
+        run: |
+          VERSION=$(grep -m1 '^version = "' Cargo.toml | sed -E 's/version = "([^"]+)"/\1/')
+          if [[ -z "$VERSION" ]]; then
+            echo "Could not read version from Cargo.toml"
+            exit 1
+          fi
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid Cargo.toml version: $VERSION"
+            echo "Expected format: MAJOR.MINOR.PATCH (example: 0.1.0)"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Fail if release tag already exists
+        env:
+          TAG: v${{ steps.cargo_version.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release already exists for tag: $TAG"
+            exit 1
+          fi
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run tests
+        run: cargo test --all-targets --all-features
+
+      - name: Build release assets
+        run: cargo build --release
+
+      - name: Create GitHub Release + upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.cargo_version.outputs.version }}
+          generate_release_notes: true
+          files: |
+            target/release/bfree
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
