@@ -1,7 +1,7 @@
 # bfree ✨
 
-A better, human-first `free`, inspired by tools like `btop`.
-`bfree` is just starting out, but the goal is clear: a fast, elegant, zero-overhead command you’ll actually enjoy running.
+A better `free`, human by default.
+Inspired by tools like `btop`, `bfree` gives you memory and swap stats in a clean one-line summary.
 
 The command nobody asked for — but your RAM deserves it. 🚀
 
@@ -25,12 +25,25 @@ Modern systems deserve better visibility.
 ## Highlights
 
 - 🧼 **Clean by design** — minimal, focused, and pleasant to read
-- ⚡ **Snappy** — built with `clap`
+- 📊 **Human-first output** — sizes + percentages in one line
+- 🧠 **Useful memory semantics** — includes effective reclaimable cache
+- ⚡ **Snappy** — lightweight Rust CLI
 
 ## Status
 
-- ✅ CLI scaffold
-- 🔜 Memory logic
+- ✅ Linux `/proc/meminfo` parser
+- ✅ One-line memory + swap output
+- ✅ Percentages for used/cache/available/swap
+- ✅ Unit tests for memory math
+- 🔜 Container/cgroup-aware mode
+- 🔜 PSI (pressure stall information)
+- 🔜 Optional visual signal (bars/colors)
+
+## Current Semantics
+
+- `used` = `MemTotal - MemAvailable`
+- `cache` = `Cached + SReclaimable - Shmem` (effective reclaimable cache)
+- `avail` = `MemAvailable`
 
 ## Run
 

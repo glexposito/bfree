@@ -1,43 +1,26 @@
+use bfree::platform::linux;
+use bfree::render::text;
 use clap::Parser;
 
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    #[arg(short, long)]
-    watch: Option<f64>,
+#[derive(Parser)]
+#[command(
+    author,
+    version,
+    about = "A better free, human by default.",
+    long_about = None
+)]
 
-    #[arg(long)]
-    json: bool,
-
-    #[arg(long)]
-    no_color: bool,
-
-    #[arg(short, long)]
-    verbose: bool,
-}
+struct Args {}
 
 fn main() {
-    // Parse CLI arguments
-    let args = Args::parse();
+    // Enables --help and --version
+    let _ = Args::parse();
 
-    println!("Parsed arguments:");
-    println!("{:#?}", args);
+    // Real logic
+    let stats = linux::read_memory_stats().unwrap_or_else(|e| {
+        eprintln!("bfree: {e}");
+        std::process::exit(1);
+    });
 
-    if let Some(interval) = args.watch {
-        println!("Watch mode enabled: refreshing every {} seconds", interval);
-    }
-
-    if args.json {
-        println!("JSON output mode enabled");
-    }
-
-    if args.no_color {
-        println!("Color disabled");
-    }
-
-    if args.verbose {
-        println!("Verbose mode enabled");
-    }
-
-    println!("(No memory logic implemented yet)");
+    println!("{}", text::one_line(&stats));
 }
