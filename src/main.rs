@@ -1,5 +1,5 @@
 use bfree::platform::linux;
-use bfree::render::{text, verbose};
+use bfree::render::{pretty, text, verbose};
 use clap::Parser;
 
 #[derive(Parser)]
@@ -9,10 +9,13 @@ use clap::Parser;
     about = "A better free, human by default.",
     long_about = None
 )]
+
 struct Args {
-    /// Show extended memory breakdown
     #[arg(short, long)]
     verbose: bool,
+
+    #[arg(long)]
+    pretty: bool,
 }
 
 fn main() {
@@ -23,9 +26,9 @@ fn main() {
         std::process::exit(1);
     });
 
-    if args.verbose {
-        // verbose::render() already includes a trailing newline in the format string,
-        // so we print without adding another one.
+    if args.pretty {
+        print!("{}", pretty::render(&stats));
+    } else if args.verbose {
         print!("{}", verbose::render(&stats));
     } else {
         println!("{}", text::one_line(&stats));
