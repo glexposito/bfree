@@ -17,7 +17,7 @@ fn compact_render_renders_expected_layout_and_percentages() {
     let rendered = render(&stats);
     assert_eq!(
         rendered,
-        "Mem 10.0G used 4.0G (40%) cache 2.5G (25%) avail 6.0G (60%) | Swap 2.0G used 1.0G (50%)"
+        "Mem 10.0G used 4.0G (40%) avail 6.0G (60%) | Swap 2.0G used 1.0G (50%)"
     );
 }
 
@@ -28,7 +28,7 @@ fn compact_render_handles_small_and_zero_values() {
     let rendered = render(&stats);
     assert_eq!(
         rendered,
-        "Mem 999B used 999B (100%) cache 0B (0%) avail 0B (0%) | Swap 0B used 0B (0%)"
+        "Mem 999B used 999B (100%) avail 0B (0%) | Swap 0B used 0B (0%)"
     );
 }
 

@@ -3,7 +3,7 @@ use super::MEMINFO_PATH;
 #[derive(Debug)]
 pub enum LinuxMemError {
     Io(std::io::Error),
-    ParseLine { line: usize, content: String },
+    ParseLine { content: String },
     MissingKey(&'static str),
     UnsupportedUnit { key: &'static str, unit: String },
 }
@@ -12,8 +12,8 @@ impl std::fmt::Display for LinuxMemError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             LinuxMemError::Io(e) => write!(f, "failed to read {MEMINFO_PATH}: {e}"),
-            LinuxMemError::ParseLine { line, content } => {
-                write!(f, "failed to parse {MEMINFO_PATH} line {line}: {content}")
+            LinuxMemError::ParseLine { content } => {
+                write!(f, "failed to parse {MEMINFO_PATH} line: {content}")
             }
             LinuxMemError::MissingKey(key) => write!(f, "missing key in {MEMINFO_PATH}: {key}"),
             LinuxMemError::UnsupportedUnit { key, unit } => {

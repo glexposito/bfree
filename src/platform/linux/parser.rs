@@ -4,10 +4,10 @@ use super::LinuxMemError;
 
 pub(super) fn parse_meminfo_content(content: &str) -> Result<ParsedMeminfo, LinuxMemError> {
     let mut parsed = ParsedMeminfo::default();
-    for (i, line) in content.lines().enumerate() {
-        let line_no = i + 1;
-        parsed.apply_meminfo_line(line_no, line)?;
+    for line in content.lines() {
+        parsed.process_line(line)?;
     }
+
     Ok(parsed)
 }
 
@@ -43,120 +43,107 @@ pub(super) struct ParsedMeminfo {
 }
 
 impl ParsedMeminfo {
-    fn apply_meminfo_line(&mut self, line_no: usize, line: &str) -> Result<(), LinuxMemError> {
-        let Some(parsed_line) = parse_meminfo_line(line_no, line)? else {
+    /// Parses a single line and updates the struct if the key matches a known metric.
+    fn process_line(&mut self, line: &str) -> Result<(), LinuxMemError> {
+        let line = line.trim();
+        if line.is_empty() {
+            return Ok(());
+        }
+
+        // Robustness: Ignore lines that don't look like "Key: Value"
+        let Some((key, value_part)) = line.split_once(':') else {
             return Ok(());
         };
 
-        // Core memory fields are required; swap fields are best-effort.
-        match parsed_line.key {
+        let key = key.trim();
+        let value_part = value_part.trim();
+
+        // Dispatch to specific field parsers
+        match key {
             "MemTotal" => {
-                self.mem_total = Some(kb_required_to_bytes(
-                    "MemTotal",
-                    parsed_line.value,
-                    parsed_line.unit,
-                )?)
+                self.mem_total = Some(self.parse_required("MemTotal", value_part, line)?);
             }
             "MemAvailable" => {
-                self.mem_available = Some(kb_required_to_bytes(
-                    "MemAvailable",
-                    parsed_line.value,
-                    parsed_line.unit,
-                )?)
+                self.mem_available = Some(self.parse_required("MemAvailable", value_part, line)?);
             }
             "Cached" => {
-                self.mem_cached = Some(kb_required_to_bytes(
-                    "Cached",
-                    parsed_line.value,
-                    parsed_line.unit,
-                )?)
+                self.mem_cached = Some(self.parse_required("Cached", value_part, line)?);
             }
             "SReclaimable" => {
-                self.mem_sreclaimable = Some(kb_required_to_bytes(
-                    "SReclaimable",
-                    parsed_line.value,
-                    parsed_line.unit,
-                )?)
+                self.mem_sreclaimable =
+                    Some(self.parse_required("SReclaimable", value_part, line)?);
             }
             "Shmem" => {
-                self.mem_shmem = Some(kb_required_to_bytes(
-                    "Shmem",
-                    parsed_line.value,
-                    parsed_line.unit,
-                )?)
+                self.mem_shmem = Some(self.parse_required("Shmem", value_part, line)?);
             }
             "SwapTotal" => {
-                self.swap_total = kb_optional_to_bytes(parsed_line.value, parsed_line.unit)
+                self.swap_total = self.parse_optional(value_part, line)?;
             }
             "SwapFree" => {
-                self.swap_free = kb_optional_to_bytes(parsed_line.value, parsed_line.unit)
+                self.swap_free = self.parse_optional(value_part, line)?;
             }
-            _ => {}
+            _ => {} // Ignore unknown keys
         }
 
         Ok(())
     }
-}
 
-struct ParsedLine<'a> {
-    key: &'a str,
-    value: u64,
-    unit: Option<&'a str>,
-}
+    /// Parses a required field. Errors if value is invalid or unit is not "kB".
+    fn parse_required(
+        &self,
+        key: &'static str,
+        value_str: &str,
+        full_line: &str,
+    ) -> Result<u64, LinuxMemError> {
+        let (value, unit) = self.parse_numeric_part(value_str, full_line)?;
 
-fn parse_meminfo_line(line_no: usize, line: &str) -> Result<Option<ParsedLine<'_>>, LinuxMemError> {
-    let trimmed = line.trim();
-    if trimmed.is_empty() {
-        return Ok(None);
+        // Enforce units for required fields
+        match unit {
+            Some("kB") => Ok(value * 1024),
+            None => Ok(value),
+            Some(other_unit) => Err(LinuxMemError::UnsupportedUnit {
+                key,
+                unit: other_unit.to_string(),
+            }),
+        }
     }
 
-    let parse_line_err = || LinuxMemError::ParseLine {
-        line: line_no,
-        content: trimmed.to_string(),
-    };
+    /// Parses an optional field (like Swap). Returns None if unit is unsupported.
+    fn parse_optional(
+        &self,
+        value_str: &str,
+        full_line: &str,
+    ) -> Result<Option<u64>, LinuxMemError> {
+        let (value, unit) = self.parse_numeric_part(value_str, full_line)?;
 
-    let (key, value_part) = trimmed.split_once(':').ok_or_else(parse_line_err)?;
+        // Best-effort for optional fields
+        match unit {
+            Some("kB") => Ok(Some(value * 1024)),
+            None => Ok(Some(value)),
+            Some(_) => Ok(None), // Ignore unsupported units for optional fields
+        }
+    }
 
-    let mut parts = value_part.split_whitespace();
-    let value = parts
-        .next()
-        .ok_or_else(parse_line_err)?
-        .parse::<u64>()
-        .map_err(|_| LinuxMemError::ParseLine {
-            line: line_no,
-            content: trimmed.to_string(),
+    /// Helper to parse "123 kB" into (123, Some("kB")).
+    fn parse_numeric_part<'a>(
+        &self,
+        s: &'a str,
+        full_line: &str,
+    ) -> Result<(u64, Option<&'a str>), LinuxMemError> {
+        let mut parts = s.split_whitespace();
+
+        let val_str = parts.next().ok_or_else(|| LinuxMemError::ParseLine {
+            content: full_line.to_string(),
         })?;
-    let unit = parts.next();
 
-    Ok(Some(ParsedLine {
-        key: key.trim(),
-        value,
-        unit,
-    }))
-}
+        let value = val_str
+            .parse::<u64>()
+            .map_err(|_| LinuxMemError::ParseLine {
+                content: full_line.to_string(),
+            })?;
 
-/// Convert a required key to bytes, expecting kB.
-fn kb_required_to_bytes(
-    key: &'static str,
-    value: u64,
-    unit: Option<&str>,
-) -> Result<u64, LinuxMemError> {
-    match unit {
-        Some("kB") => Ok(value * 1024),
-        None => Ok(value), // defensive: if unit missing, treat as bytes
-        Some(other) => Err(LinuxMemError::UnsupportedUnit {
-            key,
-            unit: other.to_string(),
-        }),
-    }
-}
-
-/// Convert an optional key to bytes (kB). Returns None for unsupported units.
-fn kb_optional_to_bytes(value: u64, unit: Option<&str>) -> Option<u64> {
-    match unit {
-        Some("kB") => Some(value * 1024),
-        None => Some(value),
-        Some(_) => None,
+        let unit = parts.next();
+        Ok((value, unit))
     }
 }
 
@@ -225,24 +212,19 @@ Shmem:            10 kB
     }
 
     #[test]
-    fn reports_parse_error_with_line_context() {
+    fn ignores_malformed_lines_and_unknown_keys() {
         let meminfo = "\
 MemTotal:       1000 kB
 MemAvailable:    500 kB
 bad line without separator
+UnknownKey:      123 kB
 Cached:          100 kB
 SReclaimable:     20 kB
 Shmem:            10 kB
 ";
 
-        let err = parse_to_stats(meminfo).expect_err("malformed line should fail");
-        match err {
-            LinuxMemError::ParseLine { line, content } => {
-                assert_eq!(line, 3);
-                assert_eq!(content, "bad line without separator");
-            }
-            other => panic!("expected ParseLine, got {other:?}"),
-        }
+        // This used to fail, now it should succeed
+        parse_to_stats(meminfo).expect("malformed lines should be ignored");
     }
 
     #[test]
@@ -256,7 +238,7 @@ Shmem:            10 kB
 ";
 
         let err = parse_to_stats(meminfo).expect_err("invalid numeric value should fail");
-        assert!(matches!(err, LinuxMemError::ParseLine { line: 1, .. }));
+        assert!(matches!(err, LinuxMemError::ParseLine { .. }));
     }
 
     #[test]

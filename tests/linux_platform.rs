@@ -57,12 +57,10 @@ fn linux_error_display_includes_context() {
     assert!(io_msg.contains("boom"));
 
     let parse = linux::LinuxMemError::ParseLine {
-        line: 42,
         content: "MemTotal abc".to_string(),
     };
     let parse_msg = parse.to_string();
-    assert!(parse_msg.contains("failed to parse /proc/meminfo line 42"));
-    assert!(parse_msg.contains("MemTotal abc"));
+    assert!(parse_msg.contains("failed to parse /proc/meminfo line: MemTotal abc"));
 
     let missing = linux::LinuxMemError::MissingKey("MemTotal");
     assert!(missing.to_string().contains("missing key"));
