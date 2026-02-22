@@ -9,6 +9,7 @@ enum BarTone {
     Good,
 }
 
+/// Pretty, multi-line output with colored bars for memory and swap sections.
 pub fn render(s: &MemoryStats) -> String {
     let mem_used_pct = s.mem_used_percent();
     let mem_cache_pct = s.mem_cache_percent();

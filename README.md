@@ -10,10 +10,26 @@ It keeps the speed and simplicity of `free` while improving readability and pres
 
 - Human-readable sizes and percentages
 - Multiple output modes: `compact` (default), `extended`, and `pretty`
-- Linux-native data source: `/proc/meminfo`
+- Linux-only (currently), using `/proc/meminfo`
 - Small dependency surface and fast startup
 
+## Platform Support
+
+`bfree` currently supports Linux only (reads `/proc/meminfo`).
+
 ## Installation
+
+### Cargo
+
+`bfree` is published on crates.io:
+
+- https://crates.io/crates/bfree
+
+Install with:
+
+```bash
+cargo install bfree
+```
 
 ### From source
 
@@ -27,6 +43,10 @@ cargo build --release
 ### Arch Linux (AUR)
 
 Release publishing to AUR is automated by the project release workflow.
+
+Package page:
+
+- https://aur.archlinux.org/packages/bfree
 
 ```bash
 <aur-helper> -S bfree
@@ -51,8 +71,13 @@ bfree --pretty
 `bfree` currently uses the following memory model:
 
 - `used = MemTotal - MemAvailable`
-- `cache = Cached + SReclaimable - Shmem` (effective reclaimable cache)
 - `avail = MemAvailable`
+- `cache = Cached + SReclaimable - Shmem` (effective reclaimable cache)
+
+Mode notes:
+
+- `compact` (default) shows `used` and `avail` for memory, plus swap totals/usage.
+- `--extended` and `--pretty` also show `cache`.
 
 ## Project Status
 
