@@ -16,7 +16,11 @@ use parser::{build_memory_stats, parse_meminfo_content};
 /// need to know anything about `/proc` keys or parsing.
 pub fn read_memory_stats() -> Result<MemoryStats, LinuxMemError> {
     let content = load_meminfo()?;
-    let parsed = parse_meminfo_content(&content)?;
+    parse_meminfo(&content)
+}
+
+fn parse_meminfo(content: &str) -> Result<MemoryStats, LinuxMemError> {
+    let parsed = parse_meminfo_content(content)?;
     build_memory_stats(parsed)
 }
 

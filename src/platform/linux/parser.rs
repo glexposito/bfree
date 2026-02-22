@@ -159,3 +159,121 @@ fn kb_optional_to_bytes(value: u64, unit: Option<&str>) -> Option<u64> {
         Some(_) => None,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{build_memory_stats, parse_meminfo_content};
+    use crate::platform::linux::LinuxMemError;
+
+    fn parse_to_stats(
+        content: &str,
+    ) -> Result<crate::core::memory_stats::MemoryStats, LinuxMemError> {
+        let parsed = parse_meminfo_content(content)?;
+        build_memory_stats(parsed)
+    }
+
+    #[test]
+    fn rejects_wrong_unit_on_required_key() {
+        let meminfo = "\
+MemTotal:       1000 MB
+MemAvailable:    500 kB
+Cached:          100 kB
+SReclaimable:     20 kB
+Shmem:            10 kB
+SwapTotal:      2048 kB
+SwapFree:       1024 kB
+";
+
+        let err = parse_to_stats(meminfo).expect_err("required key with wrong unit must fail");
+        assert!(matches!(
+            err,
+            LinuxMemError::UnsupportedUnit {
+                key: "MemTotal",
+                ..
+            }
+        ));
+    }
+
+    #[test]
+    fn ignores_wrong_unit_on_optional_swap_keys() {
+        let meminfo = "\
+MemTotal:       1000 kB
+MemAvailable:    500 kB
+Cached:          100 kB
+SReclaimable:     20 kB
+Shmem:            10 kB
+SwapTotal:      2048 MB
+SwapFree:       1024 MB
+";
+
+        let stats = parse_to_stats(meminfo).expect("optional swap parse should be best-effort");
+        assert_eq!(stats.swap_total, 0);
+        assert_eq!(stats.swap_free, 0);
+    }
+
+    #[test]
+    fn fails_when_required_key_is_missing() {
+        let meminfo = "\
+MemTotal:       1000 kB
+Cached:          100 kB
+SReclaimable:     20 kB
+Shmem:            10 kB
+";
+
+        let err = parse_to_stats(meminfo).expect_err("missing required key must fail");
+        assert!(matches!(err, LinuxMemError::MissingKey("MemAvailable")));
+    }
+
+    #[test]
+    fn reports_parse_error_with_line_context() {
+        let meminfo = "\
+MemTotal:       1000 kB
+MemAvailable:    500 kB
+bad line without separator
+Cached:          100 kB
+SReclaimable:     20 kB
+Shmem:            10 kB
+";
+
+        let err = parse_to_stats(meminfo).expect_err("malformed line should fail");
+        match err {
+            LinuxMemError::ParseLine { line, content } => {
+                assert_eq!(line, 3);
+                assert_eq!(content, "bad line without separator");
+            }
+            other => panic!("expected ParseLine, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn reports_parse_error_for_non_numeric_required_value() {
+        let meminfo = "\
+MemTotal:       not-a-number kB
+MemAvailable:    500 kB
+Cached:          100 kB
+SReclaimable:     20 kB
+Shmem:            10 kB
+";
+
+        let err = parse_to_stats(meminfo).expect_err("invalid numeric value should fail");
+        assert!(matches!(err, LinuxMemError::ParseLine { line: 1, .. }));
+    }
+
+    #[test]
+    fn accepts_required_values_without_unit_as_bytes() {
+        let meminfo = "\
+MemTotal:       1024
+MemAvailable:    512
+Cached:          128
+SReclaimable:     64
+Shmem:            32
+";
+
+        let stats = parse_to_stats(meminfo).expect("unitless required values should parse");
+        assert_eq!(stats.mem_total, 1024);
+        assert_eq!(stats.mem_available, 512);
+        assert_eq!(stats.mem_cached, 128);
+        assert_eq!(stats.mem_sreclaimable, 64);
+        assert_eq!(stats.mem_shmem, 32);
+    }
+}
