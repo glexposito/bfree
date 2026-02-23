@@ -3,19 +3,14 @@ use bfree::render::{compact, extended, pretty};
 use clap::Parser;
 
 #[derive(Parser)]
-#[command(
-    author,
-    version,
-    about = "A better free, human by default.",
-    long_about = None
-)]
+#[command(author, version, about = "Human-friendly Linux memory usage.")]
 
 struct Args {
     #[arg(
         short = 'e',
         long = "extended",
         conflicts_with = "pretty",
-        help = "Show extended memory details (totals, percentages, and kernel breakdown)"
+        help = "Show multi-line details: totals, percentages, and cache breakdown"
     )]
     extended: bool,
 
@@ -23,7 +18,7 @@ struct Args {
         short = 'p',
         long = "pretty",
         conflicts_with = "extended",
-        help = "Show a visual view with colored bars for memory and swap"
+        help = "Show a visual multi-line view with colored bars"
     )]
     pretty: bool,
 }
