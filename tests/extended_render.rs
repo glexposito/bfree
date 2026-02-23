@@ -16,7 +16,7 @@ fn extended_render_matches_expected_layout_and_values() {
 
     let out = render(&stats);
 
-    let expected = "Memory\n  Total:        10.0G\n  Used:         4.0G (40%)\n  Cache:        2.5G (25%)\n  Available:    6.0G (60%)\n\nSwap\n  Total:        2.0G\n  Used:         1.0G (50%)\n  Free:         1.0G\n\nKernel Breakdown\n  Cached:        2.0G\n  SReclaimable:  1.0G\n  Shmem:         512.0M\n";
+    let expected = "Memory\n  Total:        10.0G\n  Used:         4.0G (40%)\n  Cache:        2.5G (25%)\n  Available:    6.0G (60%)\n\nSwap\n  Total:        2.0G\n  Used:         1.0G (50%)\n  Free:         1.0G (50%)\n\nCache Breakdown\n  Cached:        2.0G\n  SReclaimable:  1.0G\n  Shmem:         512.0M\n";
 
     assert_eq!(out, expected);
 }
@@ -31,7 +31,9 @@ fn extended_render_handles_small_and_zero_values() {
     assert!(out.contains("Used:         999B (100%)"));
     assert!(out.contains("Cache:        0B (0%)"));
     assert!(out.contains("Available:    0B (0%)"));
-    assert!(out.contains("Swap\n  Total:        0B\n  Used:         0B (0%)\n  Free:         0B"));
+    assert!(
+        out.contains("Swap\n  Total:        0B\n  Used:         0B (0%)\n  Free:         0B (0%)")
+    );
 }
 
 #[test]

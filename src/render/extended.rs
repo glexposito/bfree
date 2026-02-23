@@ -1,7 +1,7 @@
 use crate::core::memory_stats::MemoryStats;
 use crate::render::format::fmt_short;
 
-/// Extended, multi-line output with an extra kernel breakdown section.
+/// Extended, multi-line output with an extra cache breakdown section.
 pub fn render(s: &MemoryStats) -> String {
     format!(
         "\
@@ -14,9 +14,9 @@ Memory
 Swap
   Total:        {swap_total}
   Used:         {swap_used} ({swap_pct:.0}%)
-  Free:         {swap_free}
+  Free:         {swap_free} ({swap_free_pct:.0}%)
 
-Kernel Breakdown
+Cache Breakdown
   Cached:        {cached}
   SReclaimable:  {sreclaimable}
   Shmem:         {shmem}
@@ -32,6 +32,11 @@ Kernel Breakdown
         swap_used = fmt_short(s.swap_used()),
         swap_pct = s.swap_used_percent(),
         swap_free = fmt_short(s.swap_free),
+        swap_free_pct = if s.swap_total == 0 {
+            0.0
+        } else {
+            (s.swap_free as f64) * 100.0 / (s.swap_total as f64)
+        },
         cached = fmt_short(s.mem_cached),
         sreclaimable = fmt_short(s.mem_sreclaimable),
         shmem = fmt_short(s.mem_shmem),
