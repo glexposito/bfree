@@ -17,7 +17,7 @@ fn compact_render_renders_expected_layout_and_percentages() {
     let rendered = render(&stats);
     assert_eq!(
         rendered,
-        "Mem 10.0G used 4.0G (40%) avail 6.0G (60%) | Swap 2.0G used 1.0G (50%)"
+        "Mem 10G used 4G (40%) avail 6G (60%) | Swap 2G used 1G (50%)"
     );
 }
 
