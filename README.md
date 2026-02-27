@@ -10,6 +10,7 @@ It keeps the speed and simplicity of `free` while improving readability and pres
 
 - Human-readable sizes and percentages
 - Multiple output modes: `compact` (default), `extended`, and `pretty`
+- Structured output: `--json` and `--yaml` (compact by default, extended with `--extended`)
 - Linux-only (currently), using `/proc/meminfo`
 - Small dependency surface and fast startup
 
@@ -66,6 +67,14 @@ bfree --extended
 bfree --pretty
 ```
 
+```bash
+bfree --json
+```
+
+```bash
+bfree --extended --yaml
+```
+
 ## Output Semantics
 
 `bfree` currently uses the following memory model:
@@ -78,6 +87,7 @@ Mode notes:
 
 - `compact` (default) shows `used` and `avail` for memory, plus swap totals/usage.
 - `--extended` and `--pretty` also show `cache`.
+- `--json` and `--yaml` export machine-friendly structures for compact/extended modes.
 
 ## Project Status
 
