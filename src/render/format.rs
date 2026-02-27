@@ -8,14 +8,22 @@ pub fn fmt_short(bytes: u64) -> String {
 
     let b = bytes as f64;
 
+    fn fmt(value: f64, unit: &str) -> String {
+        let mut s = format!("{value:.1}");
+        if s.ends_with(".0") {
+            s.truncate(s.len() - 2);
+        }
+        format!("{s}{unit}")
+    }
+
     if b >= T {
-        format!("{:.1}T", b / T)
+        fmt(b / T, "T")
     } else if b >= G {
-        format!("{:.1}G", b / G)
+        fmt(b / G, "G")
     } else if b >= M {
-        format!("{:.1}M", b / M)
+        fmt(b / M, "M")
     } else if b >= K {
-        format!("{:.0}K", b / K)
+        fmt(b / K, "K")
     } else {
         format!("{bytes}B")
     }

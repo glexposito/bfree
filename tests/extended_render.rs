@@ -16,7 +16,7 @@ fn extended_render_matches_expected_layout_and_values() {
 
     let out = render(&stats);
 
-    let expected = "Memory\n  Total:        10.0G\n  Used:         4.0G (40%)\n  Cache:        2.5G (25%)\n  Available:    6.0G (60%)\n\nSwap\n  Total:        2.0G\n  Used:         1.0G (50%)\n  Free:         1.0G (50%)\n\nCache Breakdown\n  Cached:        2.0G\n  SReclaimable:  1.0G\n  Shmem:         512.0M\n";
+    let expected = "Memory\n  Total:        10G\n  Used:         4G (40%)\n  Cache:        2.5G (25%)\n  Available:    6G (60%)\n\nSwap\n  Total:        2G\n  Used:         1G (50%)\n  Free:         1G (50%)\n\nCache Breakdown\n  Cached:        2G\n  SReclaimable:  1G\n  Shmem:         512M\n";
 
     assert_eq!(out, expected);
 }
