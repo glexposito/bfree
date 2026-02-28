@@ -38,14 +38,6 @@ struct Args {
     yaml: bool,
 }
 
-enum OutputMode {
-    Pretty,
-    Json(StructuredView),
-    Yaml(StructuredView),
-    Extended,
-    Compact,
-}
-
 fn main() {
     let args = Args::parse();
 
@@ -60,37 +52,23 @@ fn main() {
         StructuredView::Compact
     };
 
-    let mode = if args.pretty {
-        OutputMode::Pretty
+    let output = if args.pretty {
+        pretty::render(&stats)
     } else if args.json {
-        OutputMode::Json(view)
+        structured::render(&stats, StructuredFormat::Json, view).unwrap_or_else(|e| {
+            eprintln!("bfree: {e}");
+            std::process::exit(1);
+        })
     } else if args.yaml {
-        OutputMode::Yaml(view)
+        structured::render(&stats, StructuredFormat::Yaml, view).unwrap_or_else(|e| {
+            eprintln!("bfree: {e}");
+            std::process::exit(1);
+        })
     } else if args.extended {
-        OutputMode::Extended
+        extended::render(&stats)
     } else {
-        OutputMode::Compact
+        compact::render(&stats)
     };
 
-    match mode {
-        OutputMode::Pretty => print!("{}", pretty::render(&stats)),
-        OutputMode::Json(view) => {
-            let output =
-                structured::render(&stats, StructuredFormat::Json, view).unwrap_or_else(|e| {
-                    eprintln!("bfree: {e}");
-                    std::process::exit(1);
-                });
-            println!("{output}");
-        }
-        OutputMode::Yaml(view) => {
-            let output =
-                structured::render(&stats, StructuredFormat::Yaml, view).unwrap_or_else(|e| {
-                    eprintln!("bfree: {e}");
-                    std::process::exit(1);
-                });
-            println!("{output}");
-        }
-        OutputMode::Extended => print!("{}", extended::render(&stats)),
-        OutputMode::Compact => println!("{}", compact::render(&stats)),
-    }
+    println!("{output}");
 }

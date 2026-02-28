@@ -19,8 +19,7 @@ Swap
 Cache Breakdown
   Cached:        {cached}
   SReclaimable:  {sreclaimable}
-  Shmem:         {shmem}
-",
+  Shmem:         {shmem}",
         total = fmt_short(s.mem_total),
         used = fmt_short(s.mem_used()),
         used_pct = s.mem_used_percent(),
