@@ -156,8 +156,8 @@ fn serialize<T: Serialize>(value: &T, format: StructuredFormat) -> Result<String
     match format {
         StructuredFormat::Json => serde_json::to_string_pretty(value)
             .map_err(|e| format!("json serialization failed: {e}")),
-        StructuredFormat::Yaml => {
-            serde_yaml::to_string(value).map_err(|e| format!("yaml serialization failed: {e}"))
-        }
+        StructuredFormat::Yaml => serde_yaml::to_string(value)
+            .map(|s| s.strip_suffix('\n').unwrap_or(&s).to_string())
+            .map_err(|e| format!("yaml serialization failed: {e}")),
     }
 }

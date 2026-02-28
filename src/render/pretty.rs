@@ -86,8 +86,7 @@ Memory
 
 Swap
 {swap_used_line}
-{swap_free_line}
-",
+{swap_free_line}",
         used_line = used_line,
         cache_line = cache_line,
         avail_line = avail_line,
