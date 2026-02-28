@@ -2,7 +2,7 @@
 name = "bfree"
 version = "0.1.8"
 edition = "2024"
-description = "Human-friendly Linux memory usage."
+description = "bfree - memory stats for humans"
 license = "MIT"
 repository = "https://github.com/glexposito/bfree"
 readme = "README.md"

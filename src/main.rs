@@ -4,7 +4,7 @@ use bfree::render::{compact, extended, pretty, structured};
 use clap::Parser;
 
 #[derive(Parser)]
-#[command(author, version, about = "Human-friendly Linux memory usage.")]
+#[command(author, version, about = "bfree - memory stats for humans")]
 
 struct Args {
     #[arg(

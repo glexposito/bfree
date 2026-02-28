@@ -1,6 +1,6 @@
 # bfree
 
-A human-friendly view of Linux memory and swap. Inspired by tools like `btop`, `bfree` gives you memory and swap stats in a clean one-line summary.
+Memory stats for humans.
 
 `bfree` is a lightweight Rust CLI that provides a clearer, human-oriented view of Linux memory and swap usage.
 
