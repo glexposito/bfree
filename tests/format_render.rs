@@ -8,20 +8,20 @@ fn formats_bytes_without_unit_scaling() {
 
 #[test]
 fn formats_kibibytes_with_single_decimal_and_trims_dot_zero() {
-    assert_eq!(fmt_short(1024), "1K");
-    assert_eq!(fmt_short(1536), "1.5K");
+    assert_eq!(fmt_short(1024), "1KiB");
+    assert_eq!(fmt_short(1536), "1.5KiB");
 }
 
 #[test]
 fn rounds_to_one_decimal_for_scaled_units() {
     let gib = 1024_u64.pow(3);
-    assert_eq!(fmt_short((gib as f64 * 1.24) as u64), "1.2G");
-    assert_eq!(fmt_short((gib as f64 * 1.26) as u64), "1.3G");
+    assert_eq!(fmt_short((gib as f64 * 1.24) as u64), "1.2GiB");
+    assert_eq!(fmt_short((gib as f64 * 1.26) as u64), "1.3GiB");
 }
 
 #[test]
 fn trims_trailing_dot_zero_for_integer_scaled_values() {
     let gib = 1024_u64.pow(3);
-    assert_eq!(fmt_short(gib), "1G");
-    assert_eq!(fmt_short(10 * gib), "10G");
+    assert_eq!(fmt_short(gib), "1GiB");
+    assert_eq!(fmt_short(10 * gib), "10GiB");
 }

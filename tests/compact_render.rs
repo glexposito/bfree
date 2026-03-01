@@ -17,7 +17,7 @@ fn compact_render_renders_expected_layout_and_percentages() {
     let rendered = render(&stats);
     assert_eq!(
         rendered,
-        "Mem 10G used 4G (40%) avail 6G (60%) | Swap 2G used 1G (50%)"
+        "Mem 10GiB used 4GiB (40%) avail 6GiB (60%) | Swap 2GiB used 1GiB (50%)"
     );
 }
 
@@ -37,5 +37,5 @@ fn compact_render_formats_kibibyte_boundary_as_k() {
     let stats = MemoryStats::new(1024, 0, 0, 0, 0, 0, 0);
 
     let rendered = render(&stats);
-    assert!(rendered.starts_with("Mem 1K used 1K"));
+    assert!(rendered.starts_with("Mem 1KiB used 1KiB"));
 }
