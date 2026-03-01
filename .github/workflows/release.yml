@@ -49,10 +49,10 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Run tests
-        run: cargo test --all-targets --all-features
+        run: cargo test --all-targets --all-features --locked
 
       - name: Build release assets
-        run: cargo build --release
+        run: cargo build --release --locked
 
       - name: Verify crates.io publish (dry run)
         run: cargo publish --dry-run --locked
@@ -73,7 +73,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Build release assets
-        run: cargo build --release
+        run: cargo build --release --locked
 
       - name: Create GitHub Release + upload assets
         uses: softprops/action-gh-release@v2
