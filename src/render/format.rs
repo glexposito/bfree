@@ -1,5 +1,5 @@
-/// Format bytes into short human-readable units (binary/IEC style).
-/// 1024 base, like Linux tools.
+/// Format bytes into short human-readable IEC units.
+/// 1024 base: KiB, MiB, GiB, TiB.
 pub fn fmt_short(bytes: u64) -> String {
     const K: f64 = 1024.0;
     const M: f64 = 1024.0 * 1024.0;
@@ -17,13 +17,13 @@ pub fn fmt_short(bytes: u64) -> String {
     }
 
     if b >= T {
-        fmt(b / T, "T")
+        fmt(b / T, "TiB")
     } else if b >= G {
-        fmt(b / G, "G")
+        fmt(b / G, "GiB")
     } else if b >= M {
-        fmt(b / M, "M")
+        fmt(b / M, "MiB")
     } else if b >= K {
-        fmt(b / K, "K")
+        fmt(b / K, "KiB")
     } else {
         format!("{bytes}B")
     }

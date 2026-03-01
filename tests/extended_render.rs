@@ -16,7 +16,7 @@ fn extended_render_matches_expected_layout_and_values() {
 
     let out = render(&stats);
 
-    let expected = "Memory\n  Total:        10G\n  Used:         4G (40%)\n  Cache:        2.5G (25%)\n  Available:    6G (60%)\n\nSwap\n  Total:        2G\n  Used:         1G (50%)\n  Free:         1G (50%)\n\nCache Breakdown\n  Cached:        2G\n  SReclaimable:  1G\n  Shmem:         512M";
+    let expected = "Memory\n  Total:        10GiB\n  Used:         4GiB (40%)\n  Cache:        2.5GiB (25%)\n  Available:    6GiB (60%)\n\nSwap\n  Total:        2GiB\n  Used:         1GiB (50%)\n  Free:         1GiB (50%)\n\nCache Breakdown\n  Cached:        2GiB\n  SReclaimable:  1GiB\n  Shmem:         512MiB";
 
     assert_eq!(out, expected);
 }
@@ -42,6 +42,6 @@ fn extended_render_formats_kibibyte_boundary_as_k() {
 
     let out = render(&stats);
 
-    assert!(out.contains("Total:        1K"));
-    assert!(out.contains("Used:         1K (100%)"));
+    assert!(out.contains("Total:        1KiB"));
+    assert!(out.contains("Used:         1KiB (100%)"));
 }
