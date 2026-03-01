@@ -9,191 +9,30 @@ permissions:
 jobs:
   validate_release:
     name: Validate Release
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.crate_version.outputs.version }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Read version from Cargo.toml
-        id: crate_version
-        run: |
-          VERSION=$(grep -m1 '^version = "' Cargo.toml | sed -E 's/version = "([^"]+)"/\1/')
-          if [[ -z "$VERSION" ]]; then
-            echo "Could not read version from Cargo.toml"
-            exit 1
-          fi
-          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Invalid Cargo.toml version: $VERSION"
-            echo "Expected format: MAJOR.MINOR.PATCH (example: 0.1.0)"
-            exit 1
-          fi
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Fail if release tag already exists
-        env:
-          TAG: v${{ steps.crate_version.outputs.version }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "Release already exists for tag: $TAG"
-            exit 1
-          fi
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache cargo artifacts
-        uses: Swatinem/rust-cache@v2
-
-      - name: Run tests
-        run: cargo test --all-targets --all-features
-
-      - name: Build release assets
-        run: cargo build --release
-
-      - name: Verify crates.io publish (dry run)
-        run: cargo publish --dry-run --locked
+    uses: ./.github/workflows/release-validate.yml
+    secrets: inherit
 
   release_github:
     name: GitHub Release
-    runs-on: ubuntu-latest
     needs: validate_release
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache cargo artifacts
-        uses: Swatinem/rust-cache@v2
-
-      - name: Build release assets
-        run: cargo build --release
-
-      - name: Create GitHub Release + upload assets
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ needs.validate_release.outputs.version }}
-          generate_release_notes: true
-          files: |
-            target/release/bfree
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    uses: ./.github/workflows/release-github.yml
+    with:
+      version: ${{ needs.validate_release.outputs.version }}
+    secrets: inherit
 
   publish_crates:
     name: crates.io Publish
-    runs-on: ubuntu-latest
     needs: validate_release
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache cargo artifacts
-        uses: Swatinem/rust-cache@v2
-
-      - name: Publish crate to crates.io
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
-        run: cargo publish --locked
+    uses: ./.github/workflows/release-crates.yml
+    secrets: inherit
 
   publish_aur:
     name: AUR Publish
-    runs-on: ubuntu-latest
     needs:
       - validate_release
       - release_github
       - publish_crates
-
-    steps:
-      - name: Setup SSH agent for AUR
-        uses: webfactory/ssh-agent@v0.9.1
-        with:
-          ssh-private-key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-
-      - name: Add AUR host key
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H aur.archlinux.org >> ~/.ssh/known_hosts
-
-      - name: Clone AUR repo
-        run: git clone ssh://aur@aur.archlinux.org/bfree.git aur-bfree
-
-      - name: Update PKGBUILD and .SRCINFO
-        working-directory: aur-bfree
-        env:
-          VERSION: ${{ needs.validate_release.outputs.version }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          TAG="v${VERSION}"
-          SRC_URL="https://github.com/${GH_REPO}/archive/refs/tags/${TAG}.tar.gz"
-
-          curl -L --fail -o source.tar.gz "${SRC_URL}"
-          SHA256="$(sha256sum source.tar.gz | awk '{print $1}')"
-
-          cat > PKGBUILD <<EOF
-          pkgname=bfree
-          pkgver=${VERSION}
-          pkgrel=1
-          pkgdesc="A better free, human by default"
-          arch=('x86_64')
-          url="https://github.com/${GH_REPO}"
-          license=('MIT')
-          depends=('glibc')
-          makedepends=('cargo')
-          source=("${SRC_URL}")
-          sha256sums=('${SHA256}')
-
-          build() {
-            cd "\${srcdir}/bfree-\${pkgver}"
-            cargo build --release --locked
-          }
-
-          package() {
-            cd "\${srcdir}/bfree-\${pkgver}"
-            install -Dm755 target/release/bfree "\${pkgdir}/usr/bin/bfree"
-            install -Dm644 README.md "\${pkgdir}/usr/share/doc/\${pkgname}/README.md"
-          }
-          EOF
-
-          cat > .SRCINFO <<EOF
-          pkgbase = bfree
-            pkgdesc = A better free, human by default
-            pkgver = ${VERSION}
-            pkgrel = 1
-            url = https://github.com/${GH_REPO}
-            arch = x86_64
-            license = MIT
-            makedepends = cargo
-            depends = glibc
-            source = ${SRC_URL}
-            sha256sums = ${SHA256}
-
-          pkgname = bfree
-          EOF
-
-      - name: Commit and push AUR changes
-        working-directory: aur-bfree
-        env:
-          VERSION: ${{ needs.validate_release.outputs.version }}
-          AUR_NAME: ${{ secrets.AUR_NAME }}
-          AUR_EMAIL: ${{ secrets.AUR_EMAIL }}
-        run: |
-          git config user.name "${AUR_NAME:-github-actions[bot]}"
-          git config user.email "${AUR_EMAIL:-41898282+github-actions[bot]@users.noreply.github.com}"
-
-          git add PKGBUILD .SRCINFO
-          if git diff --cached --quiet; then
-            echo "No AUR metadata changes to push."
-            exit 0
-          fi
-          git commit -m "release: v${VERSION}"
-          git push
+    uses: ./.github/workflows/release-aur.yml
+    with:
+      version: ${{ needs.validate_release.outputs.version }}
+    secrets: inherit
