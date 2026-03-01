@@ -1,0 +1,66 @@
+name: Validate Release
+
+on:
+  workflow_call:
+    secrets:
+      GITHUB_TOKEN:
+        description: GitHub token used to query existing releases
+        required: true
+    outputs:
+      version:
+        description: Release version read from Cargo.toml
+        value: ${{ jobs.validate_release.outputs.version }}
+
+permissions:
+  contents: write
+
+jobs:
+  validate_release:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.crate_version.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Read version from Cargo.toml
+        id: crate_version
+        run: |
+          VERSION=$(grep -m1 '^version = "' Cargo.toml | sed -E 's/version = "([^"]+)"/\1/')
+          if [[ -z "$VERSION" ]]; then
+            echo "Could not read version from Cargo.toml"
+            exit 1
+          fi
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid Cargo.toml version: $VERSION"
+            echo "Expected format: MAJOR.MINOR.PATCH (example: 0.1.0)"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Fail if release tag already exists
+        env:
+          TAG: v${{ steps.crate_version.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release already exists for tag: $TAG"
+            exit 1
+          fi
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run tests
+        run: cargo test --all-targets --all-features
+
+      - name: Build release assets
+        run: cargo build --release
+
+      - name: Verify crates.io publish (dry run)
+        run: cargo publish --dry-run --locked

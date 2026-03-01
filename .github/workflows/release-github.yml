@@ -1,0 +1,44 @@
+name: GitHub Release
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: Release version without v prefix
+        required: true
+        type: string
+    secrets:
+      GITHUB_TOKEN:
+        description: GitHub token used to create the release
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release_github:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build release assets
+        run: cargo build --release
+
+      - name: Create GitHub Release + upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.version }}
+          generate_release_notes: true
+          files: |
+            target/release/bfree
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
