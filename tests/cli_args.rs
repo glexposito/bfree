@@ -1,5 +1,15 @@
 use bfree::cli::Args;
 use clap::{Parser, error::ErrorKind};
+use rstest::rstest;
+
+#[test]
+fn parses_with_no_flags() {
+    let args = Args::try_parse_from(["bfree"]).expect("valid args");
+    assert!(!args.extended);
+    assert!(!args.pretty);
+    assert!(!args.json);
+    assert!(!args.yaml);
+}
 
 #[test]
 fn parses_extended_flag() {
@@ -11,8 +21,19 @@ fn parses_extended_flag() {
 }
 
 #[test]
-fn rejects_pretty_with_json() {
-    let err = Args::try_parse_from(["bfree", "--pretty", "--json"]).unwrap_err();
+fn parses_short_extended_flag() {
+    let args = Args::try_parse_from(["bfree", "-e"]).expect("valid args");
+    assert!(args.extended);
+    assert!(!args.pretty);
+    assert!(!args.json);
+    assert!(!args.yaml);
+}
+
+#[rstest]
+#[case("--json")]
+#[case("--yaml")]
+fn rejects_pretty_with_structured_formats(#[case] format_flag: &str) {
+    let err = Args::try_parse_from(["bfree", "--pretty", format_flag]).unwrap_err();
     assert_eq!(err.kind(), ErrorKind::ArgumentConflict);
 }
 

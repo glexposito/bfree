@@ -13,6 +13,26 @@ fn default_output_contains_mem_and_swap_sections() {
 }
 
 #[test]
+fn extended_flag_outputs_multiline_sections() {
+    let mut cmd = cargo_bin_cmd!("bfree");
+    cmd.arg("--extended")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Memory"))
+        .stdout(predicate::str::contains("Swap"));
+}
+
+#[test]
+fn pretty_flag_outputs_visual_sections() {
+    let mut cmd = cargo_bin_cmd!("bfree");
+    cmd.arg("--pretty")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Memory"))
+        .stdout(predicate::str::contains("Swap"));
+}
+
+#[test]
 fn json_flag_outputs_valid_json_document() {
     let mut cmd = cargo_bin_cmd!("bfree");
     let output = cmd
@@ -42,14 +62,4 @@ fn yaml_flag_outputs_valid_yaml_document() {
 
     assert!(parsed.get("memory").is_some());
     assert!(parsed.get("swap").is_some());
-}
-
-#[test]
-fn pretty_conflicts_with_json_at_runtime() {
-    let mut cmd = cargo_bin_cmd!("bfree");
-    cmd.arg("--pretty")
-        .arg("--json")
-        .assert()
-        .failure()
-        .stderr(predicate::str::contains("cannot be used with"));
 }
