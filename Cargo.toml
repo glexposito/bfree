@@ -19,7 +19,7 @@ serde_yaml = "0.9"
 [dev-dependencies]
 assert_cmd = "2.0"
 predicates = "3.1"
-rstest = "0.24"
+rstest = "0.26"
 
 [profile.release]
 lto = true
