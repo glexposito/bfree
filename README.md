@@ -9,7 +9,7 @@ It keeps the speed and simplicity of `free` while improving readability and pres
 ## Features
 
 - Human-readable sizes and percentages
-- Multiple output modes: `compact` (default), `extended`, and `pretty`
+- Multiple output modes: `compact` (default), `extended`, and `visual`
 - Structured output: `--json` and `--yaml` (compact by default, extended with `--extended`)
 - Linux-only (currently), using `/proc/meminfo`
 - Small dependency surface and fast startup
@@ -64,7 +64,7 @@ bfree --extended
 ```
 
 ```bash
-bfree --pretty
+bfree --visual
 ```
 
 ```bash
@@ -86,7 +86,7 @@ bfree --extended --yaml
 Mode notes:
 
 - `compact` (default) shows `used` and `avail` for memory, plus swap totals/usage.
-- `--extended` and `--pretty` also show `cache`.
+- `--extended` and `--visual` also show `cache`.
 - `--json` and `--yaml` export machine-friendly structures for compact/extended modes.
 
 ## Project Status
@@ -94,7 +94,7 @@ Mode notes:
 Implemented:
 
 - Linux `/proc/meminfo` parser with typed error handling
-- Compact, extended, and pretty renderers
+- Compact, extended, and visual renderers
 - Unit tests for memory math and render behavior
 - CI for pushes and pull requests
 - Release automation for GitHub releases and AUR updates

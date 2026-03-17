@@ -9,7 +9,7 @@ enum BarTone {
     Good,
 }
 
-/// Pretty, multi-line output with colored bars for memory and swap sections.
+/// Pretty, multi-line output with monochrome bars for memory and swap sections.
 pub fn render(s: &MemoryStats) -> String {
     let mem_used_pct = s.mem_used_percent();
     let mem_cache_pct = s.mem_cache_percent();
@@ -95,19 +95,18 @@ Swap
     )
 }
 
-/// Create a colored progress bar.
+/// Create a monochrome progress bar.
 fn bar(percent: f64, tone: BarTone) -> String {
     let filled = ((percent / 100.0) * BAR_WIDTH as f64).round() as usize;
     let empty = BAR_WIDTH.saturating_sub(filled);
 
-    let filled_block = "█".repeat(filled);
+    let filled_char = match tone {
+        BarTone::Danger => '█',
+        BarTone::Warning => '▓',
+        BarTone::Good => '▒',
+    };
+    let filled_block = filled_char.to_string().repeat(filled);
     let empty_block = "░".repeat(empty);
 
-    let raw_bar = format!("{filled_block}{empty_block}");
-
-    match tone {
-        BarTone::Danger => format!("\x1b[31m{raw_bar}\x1b[0m"),
-        BarTone::Warning => format!("\x1b[33m{raw_bar}\x1b[0m"),
-        BarTone::Good => format!("\x1b[32m{raw_bar}\x1b[0m"),
-    }
+    format!("{filled_block}{empty_block}")
 }
