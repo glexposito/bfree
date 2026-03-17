@@ -69,10 +69,10 @@ fn pretty_render_aligns_bar_start_across_rows() {
     let lines = metric_lines(&out);
 
     let bar_col = lines[0]
-        .find("\u{1b}[")
-        .expect("missing ANSI color sequence");
+        .find(['█', '▓', '▒', '░'])
+        .expect("missing bar glyph");
     for line in &lines[1..] {
-        let col = line.find("\u{1b}[").expect("missing ANSI color sequence");
+        let col = line.find(['█', '▓', '▒', '░']).expect("missing bar glyph");
         assert_eq!(col, bar_col, "bar start misaligned: {line}");
     }
 }

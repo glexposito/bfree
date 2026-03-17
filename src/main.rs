@@ -18,7 +18,7 @@ fn main() {
         StructuredView::Compact
     };
 
-    let output = if args.pretty {
+    let output = if args.visual {
         pretty::render(&stats)
     } else if args.json {
         structured::render(&stats, StructuredFormat::Json, view).unwrap_or_else(|e| {
