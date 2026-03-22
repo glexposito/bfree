@@ -17,7 +17,7 @@ fn compact_render_renders_expected_layout_and_percentages() {
     let rendered = render(&stats);
     assert_eq!(
         rendered,
-        "Mem 10GiB used 4GiB (40%) avail 6GiB (60%) | Swap 2GiB used 1GiB (50%)"
+        "Mem used 4GiB / 10GiB (40%) | Swap used 1GiB / 2GiB (50%)"
     );
 }
 
@@ -28,7 +28,7 @@ fn compact_render_handles_small_and_zero_values() {
     let rendered = render(&stats);
     assert_eq!(
         rendered,
-        "Mem 999B used 999B (100%) avail 0B (0%) | Swap 0B used 0B (0%)"
+        "Mem used 999B / 999B (100%) | Swap used 0B / 0B (0%)"
     );
 }
 
@@ -37,5 +37,5 @@ fn compact_render_formats_kibibyte_boundary_as_k() {
     let stats = MemoryStats::new(1024, 0, 0, 0, 0, 0, 0);
 
     let rendered = render(&stats);
-    assert!(rendered.starts_with("Mem 1KiB used 1KiB"));
+    assert!(rendered.starts_with("Mem used 1KiB / 1KiB"));
 }
