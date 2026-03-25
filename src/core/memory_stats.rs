@@ -68,6 +68,14 @@ impl MemoryStats {
             percent(self.swap_used(), self.swap_total)
         }
     }
+
+    pub fn swap_free_percent(&self) -> f64 {
+        if self.swap_total == 0 {
+            0.0
+        } else {
+            percent(self.swap_free, self.swap_total)
+        }
+    }
 }
 
 fn percent(n: u64, d: u64) -> f64 {
