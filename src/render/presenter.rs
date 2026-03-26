@@ -1,8 +1,8 @@
 use crate::core::memory_stats::MemoryStats;
 use crate::render::Renderer;
-use crate::render::compact::CompactRenderer;
-use crate::render::extended::ExtendedRenderer;
-use crate::render::pretty::PrettyRenderer;
+use crate::render::compact::CompactView;
+use crate::render::extended::ExtendedView;
+use crate::render::pretty::PrettyView;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum HumanFormat {
@@ -22,9 +22,9 @@ impl Presenter {
 
     pub fn render(&self, stats: &MemoryStats) -> String {
         match self.format {
-            HumanFormat::Compact => CompactRenderer::new().render(stats),
-            HumanFormat::Extended => ExtendedRenderer::new().render(stats),
-            HumanFormat::Pretty => PrettyRenderer::new().render(stats),
+            HumanFormat::Compact => CompactView::new().render(stats),
+            HumanFormat::Extended => ExtendedView::new().render(stats),
+            HumanFormat::Pretty => PrettyView::new().render(stats),
         }
     }
 }

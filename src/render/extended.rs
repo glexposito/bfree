@@ -2,16 +2,16 @@ use crate::core::memory_stats::MemoryStats;
 use crate::render::Renderer;
 use crate::render::format::fmt_short;
 
-pub struct ExtendedRenderer {}
+pub struct ExtendedView {}
 
-impl ExtendedRenderer {
+impl ExtendedView {
     pub fn new() -> Self {
         Self {}
     }
 }
 
 /// Extended, multi-line output with an extra cache breakdown section.
-impl Renderer for ExtendedRenderer {
+impl Renderer for ExtendedView {
     fn render(&self, s: &MemoryStats) -> String {
         let total = fmt_short(s.mem_total);
         let used = fmt_short(s.mem_used());

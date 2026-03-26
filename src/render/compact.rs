@@ -2,9 +2,9 @@ use crate::core::memory_stats::MemoryStats;
 use crate::render::Renderer;
 use crate::render::format::fmt_short;
 
-pub struct CompactRenderer {}
+pub struct CompactView {}
 
-impl CompactRenderer {
+impl CompactView {
     pub fn new() -> Self {
         Self {}
     }
@@ -14,7 +14,7 @@ impl CompactRenderer {
 ///
 /// Example:
 /// Mem used 7.2GiB / 16GiB (45%) | Swap used 0.1GiB / 2GiB (5%)
-impl Renderer for CompactRenderer {
+impl Renderer for CompactView {
     fn render(&self, stats: &MemoryStats) -> String {
         let used = fmt_short(stats.mem_used());
         let total = fmt_short(stats.mem_total);

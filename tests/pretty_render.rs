@@ -1,6 +1,6 @@
 use bfree::core::memory_stats::MemoryStats;
 use bfree::render::Renderer;
-use bfree::render::pretty::PrettyRenderer;
+use bfree::render::pretty::PrettyView;
 
 fn metric_lines(output: &str) -> Vec<&str> {
     output
@@ -28,7 +28,7 @@ fn pretty_render_contains_expected_sections() {
         gib,
     );
 
-    let out = PrettyRenderer::new().render(&stats);
+    let out = PrettyView::new().render(&stats);
 
     assert!(out.contains("Memory"));
     assert!(out.contains("Swap"));
@@ -50,7 +50,7 @@ fn pretty_render_aligns_percent_column_across_rows() {
         511 * gib,
     );
 
-    let out = PrettyRenderer::new().render(&stats);
+    let out = PrettyView::new().render(&stats);
     let lines = metric_lines(&out);
     assert_eq!(lines.len(), 5, "expected 5 metric lines, got {lines:?}");
 
@@ -66,7 +66,7 @@ fn pretty_render_aligns_bar_start_across_rows() {
     let gib = 1024_u64.pow(3);
     let stats = MemoryStats::new(64 * gib, 12 * gib, 3 * gib, gib, 0, 4 * gib, 3 * gib);
 
-    let out = PrettyRenderer::new().render(&stats);
+    let out = PrettyView::new().render(&stats);
     let lines = metric_lines(&out);
 
     let bar_col = lines[0]

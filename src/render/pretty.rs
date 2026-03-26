@@ -33,15 +33,15 @@ fn max_width(values: &[&str]) -> usize {
     values.iter().map(|s| s.len()).max().unwrap_or(0)
 }
 
-pub struct PrettyRenderer {}
+pub struct PrettyView {}
 
-impl PrettyRenderer {
+impl PrettyView {
     pub fn new() -> Self {
         Self {}
     }
 }
 
-impl Renderer for PrettyRenderer {
+impl Renderer for PrettyView {
     fn render(&self, stats: &MemoryStats) -> String {
         let mem_used_pct = stats.mem_used_percent();
         let mem_cache_pct = stats.mem_cache_percent();
