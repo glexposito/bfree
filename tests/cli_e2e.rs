@@ -19,7 +19,9 @@ fn extended_flag_outputs_multiline_sections() {
         .assert()
         .success()
         .stdout(predicate::str::contains("Memory"))
-        .stdout(predicate::str::contains("Swap"));
+        .stdout(predicate::str::contains("Swap"))
+        .stdout(predicate::str::contains("Cache Breakdown"))
+        .stdout(predicate::str::contains("█").not());
 }
 
 #[test]
@@ -29,7 +31,8 @@ fn visual_flag_outputs_visual_sections() {
         .assert()
         .success()
         .stdout(predicate::str::contains("Memory"))
-        .stdout(predicate::str::contains("Swap"));
+        .stdout(predicate::str::contains("Swap"))
+        .stdout(predicate::str::contains("█"));
 }
 
 #[test]
