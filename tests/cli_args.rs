@@ -6,7 +6,7 @@ use rstest::rstest;
 fn parses_with_no_flags() {
     let args = Args::try_parse_from(["bfree"]).expect("valid args");
     assert!(!args.extended);
-    assert!(!args.visual);
+    assert!(!args.pretty);
     assert!(!args.json);
     assert!(!args.yaml);
 }
@@ -15,7 +15,7 @@ fn parses_with_no_flags() {
 fn parses_extended_flag() {
     let args = Args::try_parse_from(["bfree", "--extended"]).expect("valid args");
     assert!(args.extended);
-    assert!(!args.visual);
+    assert!(!args.pretty);
     assert!(!args.json);
     assert!(!args.yaml);
 }
@@ -24,7 +24,7 @@ fn parses_extended_flag() {
 fn parses_short_extended_flag() {
     let args = Args::try_parse_from(["bfree", "-e"]).expect("valid args");
     assert!(args.extended);
-    assert!(!args.visual);
+    assert!(!args.pretty);
     assert!(!args.json);
     assert!(!args.yaml);
 }
@@ -32,14 +32,14 @@ fn parses_short_extended_flag() {
 #[rstest]
 #[case("--json")]
 #[case("--yaml")]
-fn rejects_visual_with_structured_formats(#[case] format_flag: &str) {
-    let err = Args::try_parse_from(["bfree", "--visual", format_flag]).unwrap_err();
+fn rejects_pretty_with_structured_formats(#[case] format_flag: &str) {
+    let err = Args::try_parse_from(["bfree", "--pretty", format_flag]).unwrap_err();
     assert_eq!(err.kind(), ErrorKind::ArgumentConflict);
 }
 
 #[test]
-fn rejects_visual_with_extended() {
-    let err = Args::try_parse_from(["bfree", "--visual", "--extended"]).unwrap_err();
+fn rejects_pretty_with_extended() {
+    let err = Args::try_parse_from(["bfree", "--pretty", "--extended"]).unwrap_err();
     assert_eq!(err.kind(), ErrorKind::ArgumentConflict);
 }
 

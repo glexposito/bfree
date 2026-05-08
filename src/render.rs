@@ -1,7 +1,6 @@
 use crate::core::memory_stats::MemoryStats;
 
 pub mod format;
-pub mod presenter;
 pub mod structured;
 pub mod views;
 
