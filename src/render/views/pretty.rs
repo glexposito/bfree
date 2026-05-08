@@ -66,12 +66,12 @@ impl Renderer for PrettyView {
         };
 
         format!(
-            "Memory\n{}\n{}\n{}\n\nSwap\n{}\n{}",
-            fmt_line("Used:", &used_val, mem_used_pct, '█'),
-            fmt_line("Cache:", &cache_val, mem_cache_pct, '▓'),
-            fmt_line("Avail:", &avail_val, mem_avail_pct, '▒'),
-            fmt_line("Used:", &swap_used_val, swap_pct, '█'),
-            fmt_line("Free:", &swap_free_val, swap_free_pct, '▒'),
+            "memory\n{}\n{}\n{}\n\nswap\n{}\n{}",
+            fmt_line("used:", &used_val, mem_used_pct, '█'),
+            fmt_line("cache:", &cache_val, mem_cache_pct, '▓'),
+            fmt_line("avail:", &avail_val, mem_avail_pct, '▒'),
+            fmt_line("used:", &swap_used_val, swap_pct, '█'),
+            fmt_line("free:", &swap_free_val, swap_free_pct, '▒'),
         )
     }
 }

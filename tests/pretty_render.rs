@@ -7,10 +7,10 @@ fn metric_lines(output: &str) -> Vec<&str> {
         .lines()
         .filter(|l| {
             let t = l.trim_start();
-            t.starts_with("Used:")
-                || t.starts_with("Cache:")
-                || t.starts_with("Avail:")
-                || t.starts_with("Free:")
+            t.starts_with("used:")
+                || t.starts_with("cache:")
+                || t.starts_with("avail:")
+                || t.starts_with("free:")
         })
         .collect()
 }
@@ -30,11 +30,11 @@ fn pretty_render_contains_expected_sections() {
 
     let out = PrettyView.render(&stats);
 
-    assert!(out.contains("Memory"));
-    assert!(out.contains("Swap"));
-    assert!(out.contains("Cache:"));
-    assert!(out.contains("Avail:"));
-    assert!(out.contains("Free:"));
+    assert!(out.contains("memory"));
+    assert!(out.contains("swap"));
+    assert!(out.contains("cache:"));
+    assert!(out.contains("avail:"));
+    assert!(out.contains("free:"));
 }
 
 #[test]

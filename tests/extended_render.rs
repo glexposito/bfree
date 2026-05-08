@@ -17,7 +17,7 @@ fn extended_render_matches_expected_layout_and_values() {
 
     let out = ExtendedView.render(&stats);
 
-    let expected = "Memory\n  Total:        10GiB\n  Used:         4GiB (40%)\n  Cache:        2.5GiB (25%)\n  Available:    6GiB (60%)\n\nSwap\n  Total:        2GiB\n  Used:         1GiB (50%)\n  Free:         1GiB (50%)\n\nCache Breakdown\n  Cached:        2GiB\n  SReclaimable:  1GiB\n  Shmem:         512MiB";
+    let expected = "memory\n  total:        10GiB\n  used:         4GiB (40%)\n  cache:        2.5GiB (25%)\n  available:    6GiB (60%)\n\nswap\n  total:        2GiB\n  used:         1GiB (50%)\n  free:         1GiB (50%)\n\ncache breakdown\n  cached:        2GiB\n  sreclaimable:  1GiB\n  shmem:         512MiB";
 
     assert_eq!(out, expected);
 }
@@ -28,13 +28,11 @@ fn extended_render_handles_small_and_zero_values() {
 
     let out = ExtendedView.render(&stats);
 
-    assert!(out.contains("Total:        999B"));
-    assert!(out.contains("Used:         999B (100%)"));
-    assert!(out.contains("Cache:        0B (0%)"));
-    assert!(out.contains("Available:    0B (0%)"));
-    assert!(
-        out.contains("Swap\n  Total:        0B\n  Used:         0B (0%)\n  Free:         0B (0%)")
-    );
+    assert!(out.contains("total:        999B"));
+    assert!(out.contains("used:         999B (100%)"));
+    assert!(out.contains("cache:        0B (0%)"));
+    assert!(out.contains("available:    0B (0%)"));
+    assert!(out.contains("swap\n  total:        0B\n  used:         0B (0%)\n  free:         0B (0%)"));
 }
 
 #[test]
@@ -43,6 +41,6 @@ fn extended_render_formats_kibibyte_boundary_as_k() {
 
     let out = ExtendedView.render(&stats);
 
-    assert!(out.contains("Total:        1KiB"));
-    assert!(out.contains("Used:         1KiB (100%)"));
+    assert!(out.contains("total:        1KiB"));
+    assert!(out.contains("used:         1KiB (100%)"));
 }

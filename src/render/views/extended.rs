@@ -2,7 +2,6 @@ use crate::core::memory_stats::MemoryStats;
 use crate::render::Renderer;
 use crate::render::format::fmt_short;
 
-/// Extended, multi-line output with an extra cache breakdown section.
 pub struct ExtendedView;
 
 impl Renderer for ExtendedView {
@@ -28,21 +27,21 @@ impl Renderer for ExtendedView {
 
         format!(
             "\
-Memory
-  Total:        {total}
-  Used:         {used} ({used_pct:.0}%)
-  Cache:        {cache} ({cache_pct:.0}%)
-  Available:    {avail} ({avail_pct:.0}%)
+memory
+  total:        {total}
+  used:         {used} ({used_pct:.0}%)
+  cache:        {cache} ({cache_pct:.0}%)
+  available:    {avail} ({avail_pct:.0}%)
 
-Swap
-  Total:        {swap_total}
-  Used:         {swap_used} ({swap_used_pct:.0}%)
-  Free:         {swap_free} ({swap_free_pct:.0}%)
+swap
+  total:        {swap_total}
+  used:         {swap_used} ({swap_used_pct:.0}%)
+  free:         {swap_free} ({swap_free_pct:.0}%)
 
-Cache Breakdown
-  Cached:        {cached}
-  SReclaimable:  {sreclaimable}
-  Shmem:         {shmem}"
+cache breakdown
+  cached:        {cached}
+  sreclaimable:  {sreclaimable}
+  shmem:         {shmem}"
         )
     }
 }

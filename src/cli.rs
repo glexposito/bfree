@@ -21,14 +21,14 @@ pub struct Args {
     #[arg(
         long = "json",
         conflicts_with = "yaml",
-        help = "Render default (compact) or extended stats as pretty JSON"
+        help = "Output stats as JSON"
     )]
     pub json: bool,
 
     #[arg(
         long = "yaml",
         conflicts_with = "json",
-        help = "Render default (compact) or extended stats as YAML"
+        help = "Output stats as YAML"
     )]
     pub yaml: bool,
 }
