@@ -56,10 +56,10 @@ impl Renderer for PrettyView {
 
         let fmt_line = |label: &str, val: &str, pct: f64, filled_char: char| {
             format!(
-                "  {:<6} {:<value_width$} {:>3.0}%  {}",
+                "  {:<6} {:>3.0}%  {:<value_width$}  {}",
                 label,
-                val,
                 pct,
+                val,
                 bar(pct, filled_char),
                 value_width = value_width
             )
