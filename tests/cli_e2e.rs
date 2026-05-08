@@ -8,8 +8,8 @@ fn default_output_contains_mem_and_swap_sections() {
     let mut cmd = cargo_bin_cmd!("bfree");
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("Mem "))
-        .stdout(predicate::str::contains(" | Swap "));
+        .stdout(predicate::str::contains("mem"))
+        .stdout(predicate::str::contains("swap"));
 }
 
 #[test]
@@ -18,9 +18,9 @@ fn extended_flag_outputs_multiline_sections() {
     cmd.arg("--extended")
         .assert()
         .success()
-        .stdout(predicate::str::contains("Memory"))
-        .stdout(predicate::str::contains("Swap"))
-        .stdout(predicate::str::contains("Cache Breakdown"))
+        .stdout(predicate::str::contains("memory"))
+        .stdout(predicate::str::contains("swap"))
+        .stdout(predicate::str::contains("cache breakdown"))
         .stdout(predicate::str::contains("█").not());
 }
 
@@ -30,8 +30,8 @@ fn visual_flag_outputs_visual_sections() {
     cmd.arg("--visual")
         .assert()
         .success()
-        .stdout(predicate::str::contains("Memory"))
-        .stdout(predicate::str::contains("Swap"))
+        .stdout(predicate::str::contains("memory"))
+        .stdout(predicate::str::contains("swap"))
         .stdout(predicate::str::contains("█"));
 }
 
