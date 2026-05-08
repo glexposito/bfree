@@ -76,7 +76,7 @@ jobs:
         run: cargo build --release --locked
 
       - name: Create GitHub Release + upload assets
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ needs.validate_release.outputs.version }}
           generate_release_notes: true
