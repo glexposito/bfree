@@ -24,8 +24,8 @@ pub(super) struct CompactOutput {
     swap: CompactSwap,
 }
 
-impl CompactOutput {
-    pub(super) fn from_stats(stats: &MemoryStats) -> Self {
+impl From<&MemoryStats> for CompactOutput {
+    fn from(stats: &MemoryStats) -> Self {
         Self {
             memory: CompactMemory {
                 total_bytes: stats.mem_total,

@@ -33,8 +33,8 @@ pub fn render(
     view: StructuredView,
 ) -> Result<String, String> {
     match view {
-        StructuredView::Compact => serialize(&compact::CompactOutput::from_stats(s), format),
-        StructuredView::Extended => serialize(&extended::ExtendedOutput::from_stats(s), format),
+        StructuredView::Compact => serialize(&compact::CompactOutput::from(s), format),
+        StructuredView::Extended => serialize(&extended::ExtendedOutput::from(s), format),
     }
 }
 

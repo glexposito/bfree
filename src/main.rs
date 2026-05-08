@@ -1,39 +1,37 @@
 use bfree::cli::Args;
 use bfree::platform::linux;
+use bfree::render::Renderer;
 use bfree::render::presenter::{HumanFormat, Presenter};
-use bfree::render::structured;
-use bfree::render::structured::{StructuredFormat, StructuredView};
+use bfree::render::structured::{self, StructuredFormat, StructuredView};
 use clap::Parser;
 
-enum OutputKind {
-    Human,
-    Json,
-    Yaml,
+enum OutputMode {
+    Human(HumanFormat),
+    Structured(StructuredFormat, StructuredView),
 }
 
-fn output_kind(args: &Args) -> OutputKind {
-    if args.json {
-        OutputKind::Json
-    } else if args.yaml {
-        OutputKind::Yaml
-    } else {
-        OutputKind::Human
+impl OutputMode {
+    fn from_args(args: &Args) -> Self {
+        let view = if args.extended { StructuredView::Extended } else { StructuredView::Compact };
+        if args.json {
+            Self::Structured(StructuredFormat::Json, view)
+        } else if args.yaml {
+            Self::Structured(StructuredFormat::Yaml, view)
+        } else {
+            let fmt = match (args.visual, args.extended) {
+                (true, _) => HumanFormat::Pretty,
+                (_, true) => HumanFormat::Extended,
+                _ => HumanFormat::Compact,
+            };
+            Self::Human(fmt)
+        }
     }
-}
 
-fn structured_view(args: &Args) -> StructuredView {
-    match args.extended {
-        true => StructuredView::Extended,
-        false => StructuredView::Compact,
-    }
-}
-
-fn human_format(args: &Args) -> HumanFormat {
-    match (args.visual, args.extended) {
-        (true, false) => HumanFormat::Pretty,
-        (false, true) => HumanFormat::Extended,
-        (false, false) => HumanFormat::Compact,
-        (true, true) => unreachable!("clap prevents --visual and --extended together"),
+    fn render(self, stats: &bfree::core::memory_stats::MemoryStats) -> Result<String, String> {
+        match self {
+            Self::Human(fmt) => Ok(Presenter::new(fmt).render(stats)),
+            Self::Structured(fmt, view) => structured::render(stats, fmt, view),
+        }
     }
 }
 
@@ -45,23 +43,10 @@ fn main() {
         std::process::exit(1);
     });
 
-    let output = match output_kind(&args) {
-        OutputKind::Json => {
-            structured::render(&stats, StructuredFormat::Json, structured_view(&args))
-                .unwrap_or_else(|e| {
-                    eprintln!("bfree: {e}");
-                    std::process::exit(1);
-                })
-        }
-        OutputKind::Yaml => {
-            structured::render(&stats, StructuredFormat::Yaml, structured_view(&args))
-                .unwrap_or_else(|e| {
-                    eprintln!("bfree: {e}");
-                    std::process::exit(1);
-                })
-        }
-        OutputKind::Human => Presenter::new(human_format(&args)).render(&stats),
-    };
+    let output = OutputMode::from_args(&args).render(&stats).unwrap_or_else(|e| {
+        eprintln!("bfree: {e}");
+        std::process::exit(1);
+    });
 
     println!("{output}");
 }

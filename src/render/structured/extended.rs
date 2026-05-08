@@ -36,8 +36,8 @@ pub(super) struct ExtendedOutput {
     cache_breakdown: CacheBreakdown,
 }
 
-impl ExtendedOutput {
-    pub(super) fn from_stats(stats: &MemoryStats) -> Self {
+impl From<&MemoryStats> for ExtendedOutput {
+    fn from(stats: &MemoryStats) -> Self {
         Self {
             memory: ExtendedMemory {
                 total_bytes: stats.mem_total,
