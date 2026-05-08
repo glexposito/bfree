@@ -11,12 +11,8 @@ It keeps the speed and simplicity of `free` while improving readability and pres
 - Human-readable sizes and percentages
 - Multiple output modes: `compact` (default), `extended`, and `visual`
 - Structured output: `--json` and `--yaml` (compact by default, extended with `--extended`)
-- Linux-only (currently), using `/proc/meminfo`
+- Linux-only, using `/proc/meminfo`
 - Small dependency surface and fast startup
-
-## Platform Support
-
-`bfree` currently supports Linux only (reads `/proc/meminfo`).
 
 ## Installation
 
@@ -25,8 +21,6 @@ It keeps the speed and simplicity of `free` while improving readability and pres
 `bfree` is published on crates.io:
 
 - https://crates.io/crates/bfree
-
-Install with:
 
 ```bash
 cargo install bfree
@@ -45,34 +39,16 @@ cargo build --release
 
 Release publishing to AUR is automated by the project release workflow.
 
-Package page:
-
-- https://aur.archlinux.org/packages/bfree
+Package page: https://aur.archlinux.org/packages/bfree
 
 ```bash
-<aur-helper> -S bfree
+yay -S bfree
 ```
 
 ## Usage
 
 ```bash
-bfree
-```
-
-```bash
-bfree --extended
-```
-
-```bash
-bfree --visual
-```
-
-```bash
-bfree --json
-```
-
-```bash
-bfree --extended --yaml
+bfree --help
 ```
 
 ## Output Semantics
@@ -85,8 +61,8 @@ bfree --extended --yaml
 
 Mode notes:
 
-- `compact` (default) shows `used` and `avail` for memory, plus swap totals/usage.
-- `--extended` and `--visual` also show `cache`.
+- `compact` (default) shows `used / total` and percentage for memory and swap.
+- `--extended` and `--visual` also show `cache` and `avail`.
 - `--json` and `--yaml` export machine-friendly structures for compact/extended modes.
 
 ## Project Status

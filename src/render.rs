@@ -1,5 +1,10 @@
-pub mod compact;
-pub mod extended;
+use crate::core::memory_stats::MemoryStats;
+
 pub mod format;
-pub mod pretty;
+pub mod presenter;
 pub mod structured;
+pub mod views;
+
+pub trait Renderer {
+    fn render(&self, stats: &MemoryStats) -> String;
+}

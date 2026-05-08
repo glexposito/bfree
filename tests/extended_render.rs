@@ -1,5 +1,6 @@
 use bfree::core::memory_stats::MemoryStats;
-use bfree::render::extended::render;
+use bfree::render::Renderer;
+use bfree::render::views::ExtendedView;
 
 #[test]
 fn extended_render_matches_expected_layout_and_values() {
@@ -14,7 +15,7 @@ fn extended_render_matches_expected_layout_and_values() {
         gib,
     );
 
-    let out = render(&stats);
+    let out = ExtendedView.render(&stats);
 
     let expected = "Memory\n  Total:        10GiB\n  Used:         4GiB (40%)\n  Cache:        2.5GiB (25%)\n  Available:    6GiB (60%)\n\nSwap\n  Total:        2GiB\n  Used:         1GiB (50%)\n  Free:         1GiB (50%)\n\nCache Breakdown\n  Cached:        2GiB\n  SReclaimable:  1GiB\n  Shmem:         512MiB";
 
@@ -25,7 +26,7 @@ fn extended_render_matches_expected_layout_and_values() {
 fn extended_render_handles_small_and_zero_values() {
     let stats = MemoryStats::new(999, 0, 0, 0, 0, 0, 0);
 
-    let out = render(&stats);
+    let out = ExtendedView.render(&stats);
 
     assert!(out.contains("Total:        999B"));
     assert!(out.contains("Used:         999B (100%)"));
@@ -40,7 +41,7 @@ fn extended_render_handles_small_and_zero_values() {
 fn extended_render_formats_kibibyte_boundary_as_k() {
     let stats = MemoryStats::new(1024, 0, 0, 0, 0, 0, 0);
 
-    let out = render(&stats);
+    let out = ExtendedView.render(&stats);
 
     assert!(out.contains("Total:        1KiB"));
     assert!(out.contains("Used:         1KiB (100%)"));
