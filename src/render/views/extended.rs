@@ -27,16 +27,14 @@ impl Renderer for ExtendedView {
 
         format!(
             "\
-memory
-  total:        {total}
-  used:         {used} ({used_pct:.0}%)
-  cache:        {cache} ({cache_pct:.0}%)
-  available:    {avail} ({avail_pct:.0}%)
+memory  {total}
+  used:       {used_pct:>3.0}%  {used}
+  cache:      {cache_pct:>3.0}%  {cache}
+  available:  {avail_pct:>3.0}%  {avail}
 
-swap
-  total:        {swap_total}
-  used:         {swap_used} ({swap_used_pct:.0}%)
-  free:         {swap_free} ({swap_free_pct:.0}%)
+swap  {swap_total}
+  used:  {swap_used_pct:>3.0}%  {swap_used}
+  free:  {swap_free_pct:>3.0}%  {swap_free}
 
 cache breakdown
   cached:        {cached}
