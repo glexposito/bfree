@@ -22,9 +22,9 @@ impl Presenter {
 impl Renderer for Presenter {
     fn render(&self, stats: &MemoryStats) -> String {
         match self.format {
-            HumanFormat::Compact => CompactView::default().render(stats),
-            HumanFormat::Extended => ExtendedView::default().render(stats),
-            HumanFormat::Pretty => PrettyView::default().render(stats),
+            HumanFormat::Compact => CompactView.render(stats),
+            HumanFormat::Extended => ExtendedView.render(stats),
+            HumanFormat::Pretty => PrettyView.render(stats),
         }
     }
 }

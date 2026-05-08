@@ -6,7 +6,6 @@ use crate::render::format::fmt_short;
 ///
 /// Example:
 /// Mem used 7.2GiB / 16GiB (45%) | Swap used 0.1GiB / 2GiB (5%)
-#[derive(Default)]
 pub struct CompactView;
 
 impl Renderer for CompactView {

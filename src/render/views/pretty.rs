@@ -18,7 +18,6 @@ fn max_width(values: &[&str]) -> usize {
     values.iter().map(|s| s.len()).max().unwrap_or(0)
 }
 
-#[derive(Default)]
 pub struct PrettyView;
 
 impl Renderer for PrettyView {

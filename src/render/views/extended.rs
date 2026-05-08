@@ -3,7 +3,6 @@ use crate::render::Renderer;
 use crate::render::format::fmt_short;
 
 /// Extended, multi-line output with an extra cache breakdown section.
-#[derive(Default)]
 pub struct ExtendedView;
 
 impl Renderer for ExtendedView {
