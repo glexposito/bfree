@@ -25,9 +25,9 @@ fn extended_flag_outputs_multiline_sections() {
 }
 
 #[test]
-fn visual_flag_outputs_visual_sections() {
+fn pretty_flag_outputs_pretty_sections() {
     let mut cmd = cargo_bin_cmd!("bfree");
-    cmd.arg("--visual")
+    cmd.arg("--pretty")
         .assert()
         .success()
         .stdout(predicate::str::contains("memory"))

@@ -6,17 +6,17 @@ pub struct Args {
     #[arg(
         short = 'e',
         long = "extended",
-        conflicts_with = "visual",
+        conflicts_with = "pretty",
         help = "Show multi-line details: totals, percentages, and cache breakdown"
     )]
     pub extended: bool,
 
     #[arg(
-        long = "visual",
+        long = "pretty",
         conflicts_with_all = ["extended", "json", "yaml"],
-        help = "Show a visual multi-line view with monochrome bars"
+        help = "Show a multi-line view with progress bars"
     )]
-    pub visual: bool,
+    pub pretty: bool,
 
     #[arg(
         long = "json",
