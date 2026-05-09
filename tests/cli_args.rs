@@ -29,6 +29,15 @@ fn parses_short_extended_flag() {
     assert!(!args.yaml);
 }
 
+#[test]
+fn parses_short_pretty_flag() {
+    let args = Args::try_parse_from(["bfree", "-p"]).expect("valid args");
+    assert!(args.pretty);
+    assert!(!args.extended);
+    assert!(!args.json);
+    assert!(!args.yaml);
+}
+
 #[rstest]
 #[case("--json")]
 #[case("--yaml")]
