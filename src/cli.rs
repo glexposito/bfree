@@ -12,6 +12,7 @@ pub struct Args {
     pub extended: bool,
 
     #[arg(
+        short = 'p',
         long = "pretty",
         conflicts_with_all = ["extended", "json", "yaml"],
         help = "Show a multi-line view with progress bars"
