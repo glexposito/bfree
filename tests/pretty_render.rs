@@ -18,15 +18,15 @@ fn metric_lines(output: &str) -> Vec<&str> {
 #[test]
 fn pretty_render_contains_expected_sections() {
     let gib = 1024_u64.pow(3);
-    let stats = MemoryStats::new(
-        10 * gib,
-        6 * gib,
-        2 * gib,
-        gib,
-        512 * 1024 * 1024,
-        2 * gib,
-        gib,
-    );
+    let stats = MemoryStats {
+        mem_total: 10 * gib,
+        mem_available: 6 * gib,
+        mem_cached: 2 * gib,
+        mem_sreclaimable: gib,
+        mem_shmem: 512 * 1024 * 1024,
+        swap_total: 2 * gib,
+        swap_free: gib,
+    };
 
     let out = PrettyView.render(&stats);
 
@@ -40,15 +40,15 @@ fn pretty_render_contains_expected_sections() {
 #[test]
 fn pretty_render_aligns_percent_column_across_rows() {
     let gib = 1024_u64.pow(3);
-    let stats = MemoryStats::new(
-        128 * gib,
-        7 * gib,
-        23 * gib,
-        3 * gib,
-        gib,
-        512 * gib,
-        511 * gib,
-    );
+    let stats = MemoryStats {
+        mem_total: 128 * gib,
+        mem_available: 7 * gib,
+        mem_cached: 23 * gib,
+        mem_sreclaimable: 3 * gib,
+        mem_shmem: gib,
+        swap_total: 512 * gib,
+        swap_free: 511 * gib,
+    };
 
     let out = PrettyView.render(&stats);
     let lines = metric_lines(&out);
@@ -64,7 +64,15 @@ fn pretty_render_aligns_percent_column_across_rows() {
 #[test]
 fn pretty_render_aligns_bar_start_across_rows() {
     let gib = 1024_u64.pow(3);
-    let stats = MemoryStats::new(64 * gib, 12 * gib, 3 * gib, gib, 0, 4 * gib, 3 * gib);
+    let stats = MemoryStats {
+        mem_total: 64 * gib,
+        mem_available: 12 * gib,
+        mem_cached: 3 * gib,
+        mem_sreclaimable: gib,
+        mem_shmem: 0,
+        swap_total: 4 * gib,
+        swap_free: 3 * gib,
+    };
 
     let out = PrettyView.render(&stats);
     let lines = metric_lines(&out);

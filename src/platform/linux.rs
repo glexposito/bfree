@@ -11,15 +11,15 @@ pub struct LinuxMemError(procfs::ProcError);
 pub fn read_memory_stats() -> Result<MemoryStats, LinuxMemError> {
     let mem = procfs::Meminfo::current().map_err(LinuxMemError)?;
 
-    Ok(MemoryStats::new(
-        mem.mem_total,
-        mem.mem_available.unwrap_or(mem.mem_free),
-        mem.cached,
-        mem.s_reclaimable.unwrap_or(0),
-        mem.shmem.unwrap_or(0),
-        mem.swap_total,
-        mem.swap_free,
-    ))
+    Ok(MemoryStats {
+        mem_total: mem.mem_total,
+        mem_available: mem.mem_available.unwrap_or(mem.mem_free),
+        mem_cached: mem.cached,
+        mem_sreclaimable: mem.s_reclaimable.unwrap_or(0),
+        mem_shmem: mem.shmem.unwrap_or(0),
+        swap_total: mem.swap_total,
+        swap_free: mem.swap_free,
+    })
 }
 
 impl std::fmt::Display for LinuxMemError {

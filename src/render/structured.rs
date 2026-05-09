@@ -21,8 +21,8 @@ pub(super) struct PercentValue {
     percent: f64,
 }
 
-impl PercentValue {
-    pub(super) fn new(percent: f64) -> Self {
+impl From<f64> for PercentValue {
+    fn from(percent: f64) -> Self {
         Self { percent }
     }
 }

@@ -42,18 +42,18 @@ impl From<&MemoryStats> for ExtendedOutput {
             memory: ExtendedMemory {
                 total_bytes: stats.mem_total,
                 used_bytes: stats.mem_used(),
-                used: PercentValue::new(stats.mem_used_percent()),
+                used: PercentValue::from(stats.mem_used_percent()),
                 cache_bytes: stats.mem_cache_effective(),
-                cache: PercentValue::new(stats.mem_cache_percent()),
+                cache: PercentValue::from(stats.mem_cache_percent()),
                 available_bytes: stats.mem_available,
-                available: PercentValue::new(stats.mem_available_percent()),
+                available: PercentValue::from(stats.mem_available_percent()),
             },
             swap: ExtendedSwap {
                 total_bytes: stats.swap_total,
                 used_bytes: stats.swap_used(),
-                used: PercentValue::new(stats.swap_used_percent()),
+                used: PercentValue::from(stats.swap_used_percent()),
                 free_bytes: stats.swap_free,
-                free: PercentValue::new(stats.swap_free_percent()),
+                free: PercentValue::from(stats.swap_free_percent()),
             },
             cache_breakdown: CacheBreakdown {
                 cached_bytes: stats.mem_cached,

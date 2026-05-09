@@ -30,14 +30,14 @@ impl From<&MemoryStats> for CompactOutput {
             memory: CompactMemory {
                 total_bytes: stats.mem_total,
                 used_bytes: stats.mem_used(),
-                used: PercentValue::new(stats.mem_used_percent()),
+                used: PercentValue::from(stats.mem_used_percent()),
                 available_bytes: stats.mem_available,
-                available: PercentValue::new(stats.mem_available_percent()),
+                available: PercentValue::from(stats.mem_available_percent()),
             },
             swap: CompactSwap {
                 total_bytes: stats.swap_total,
                 used_bytes: stats.swap_used(),
-                used: PercentValue::new(stats.swap_used_percent()),
+                used: PercentValue::from(stats.swap_used_percent()),
             },
         }
     }

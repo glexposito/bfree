@@ -6,7 +6,15 @@ use serde_yaml::Value as YamlValue;
 #[test]
 fn renders_compact_json_shape_and_values() {
     let gib = 1024_u64.pow(3);
-    let stats = MemoryStats::new(10 * gib, 6 * gib, 2 * gib, 1024, 512, 2 * gib, gib);
+    let stats = MemoryStats {
+        mem_total: 10 * gib,
+        mem_available: 6 * gib,
+        mem_cached: 2 * gib,
+        mem_sreclaimable: 1024,
+        mem_shmem: 512,
+        swap_total: 2 * gib,
+        swap_free: gib,
+    };
 
     let out = render(&stats, StructuredFormat::Json, StructuredView::Compact)
         .expect("compact json should render");
@@ -26,15 +34,15 @@ fn renders_compact_json_shape_and_values() {
 #[test]
 fn renders_extended_json_includes_cache_breakdown_and_swap_free() {
     let gib = 1024_u64.pow(3);
-    let stats = MemoryStats::new(
-        10 * gib,
-        6 * gib,
-        2 * gib,
-        gib,
-        512 * 1024 * 1024,
-        2 * gib,
-        gib,
-    );
+    let stats = MemoryStats {
+        mem_total: 10 * gib,
+        mem_available: 6 * gib,
+        mem_cached: 2 * gib,
+        mem_sreclaimable: gib,
+        mem_shmem: 512 * 1024 * 1024,
+        swap_total: 2 * gib,
+        swap_free: gib,
+    };
 
     let out = render(&stats, StructuredFormat::Json, StructuredView::Extended)
         .expect("extended json should render");
@@ -52,7 +60,15 @@ fn renders_extended_json_includes_cache_breakdown_and_swap_free() {
 #[test]
 fn renders_compact_yaml_shape_and_values() {
     let mib = 1024_u64.pow(2);
-    let stats = MemoryStats::new(900 * mib, 300 * mib, 0, 0, 0, 0, 0);
+    let stats = MemoryStats {
+        mem_total: 900 * mib,
+        mem_available: 300 * mib,
+        mem_cached: 0,
+        mem_sreclaimable: 0,
+        mem_shmem: 0,
+        swap_total: 0,
+        swap_free: 0,
+    };
 
     let out = render(&stats, StructuredFormat::Yaml, StructuredView::Compact)
         .expect("compact yaml should render");
@@ -67,7 +83,15 @@ fn renders_compact_yaml_shape_and_values() {
 
 #[test]
 fn renders_extended_yaml_with_zero_swap_free_percent() {
-    let stats = MemoryStats::new(1024, 512, 256, 128, 64, 0, 0);
+    let stats = MemoryStats {
+        mem_total: 1024,
+        mem_available: 512,
+        mem_cached: 256,
+        mem_sreclaimable: 128,
+        mem_shmem: 64,
+        swap_total: 0,
+        swap_free: 0,
+    };
 
     let out = render(&stats, StructuredFormat::Yaml, StructuredView::Extended)
         .expect("extended yaml should render");

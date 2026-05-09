@@ -13,26 +13,6 @@ pub struct MemoryStats {
 }
 
 impl MemoryStats {
-    pub fn new(
-        mem_total: u64,
-        mem_available: u64,
-        mem_cached: u64,
-        mem_sreclaimable: u64,
-        mem_shmem: u64,
-        swap_total: u64,
-        swap_free: u64,
-    ) -> Self {
-        Self {
-            mem_total,
-            mem_available,
-            mem_cached,
-            mem_sreclaimable,
-            mem_shmem,
-            swap_total,
-            swap_free,
-        }
-    }
-
     pub fn mem_used(&self) -> u64 {
         self.mem_total.saturating_sub(self.mem_available)
     }
