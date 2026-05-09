@@ -46,6 +46,7 @@ impl Renderer for PrettyView {
             fmt_short(stats.swap_total)
         );
 
+        let label_width = max_width(&["used:", "cache:", "available:", "free:"]);
         let value_width = max_width(&[
             &used_val,
             &cache_val,
@@ -56,11 +57,12 @@ impl Renderer for PrettyView {
 
         let fmt_line = |label: &str, val: &str, pct: f64, filled_char: char| {
             format!(
-                "  {:<6} {:>3.0}%  {:<value_width$}  {}",
+                "  {:<label_width$} {:>3.0}%  {:<value_width$}  {}",
                 label,
                 pct,
                 val,
                 bar(pct, filled_char),
+                label_width = label_width,
                 value_width = value_width
             )
         };
@@ -69,7 +71,7 @@ impl Renderer for PrettyView {
             "memory\n{}\n{}\n{}\n\nswap\n{}\n{}",
             fmt_line("used:", &used_val, mem_used_pct, '█'),
             fmt_line("cache:", &cache_val, mem_cache_pct, '▓'),
-            fmt_line("avail:", &avail_val, mem_avail_pct, '▒'),
+            fmt_line("available:", &avail_val, mem_avail_pct, '▒'),
             fmt_line("used:", &swap_used_val, swap_pct, '█'),
             fmt_line("free:", &swap_free_val, swap_free_pct, '▒'),
         )
