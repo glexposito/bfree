@@ -9,7 +9,7 @@ fn metric_lines(output: &str) -> Vec<&str> {
             let t = l.trim_start();
             t.starts_with("used:")
                 || t.starts_with("cache:")
-                || t.starts_with("avail:")
+                || t.starts_with("available:")
                 || t.starts_with("free:")
         })
         .collect()
@@ -33,7 +33,7 @@ fn pretty_render_contains_expected_sections() {
     assert!(out.contains("memory"));
     assert!(out.contains("swap"));
     assert!(out.contains("cache:"));
-    assert!(out.contains("avail:"));
+    assert!(out.contains("available:"));
     assert!(out.contains("free:"));
 }
 
